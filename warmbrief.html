@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warm Brief — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 02 · FOLD IN</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Escalation · Supervisor handoff</p>
+      <h1>Warm Brief</h1>
+      <p class="hero-tagline">When the caller escalates, inject a structured briefing via <code>addInfo</code> — stay on call instead of fragile <code>transfer()</code>.</p>
+      <div class="hero-meta">
+        <span class="badge badge-fold">FOLD IN → Glass Box</span>
+        <span class="badge badge-vertical">Vertical: BPO / Insurance FNOL</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>On escalation, the Expert compiles collected Fields into a supervisor briefing object and calls <code>addInfo("escalation_brief", {...})</code> so the agent continues the conversation with full context — simulating a warm handoff without dialing a human in the demo room. The console shows the briefing card the moment <code>onEscalate</code> fires.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong><code>onEscalate</code></strong> — fires when caller asks for human OR agent initiates; <code>event.requestedBy</code> is <code>'human' | 'agent'</code> (<a href="https://goguava.ai/docs/on-escalate">on_escalate</a>).</li>
+        <li><strong><code>addInfo(label, info)</code></strong> — "persists for the duration of the call and surfaces naturally when relevant" (<a href="https://goguava.ai/docs/add-info">add_info</a>).</li>
+        <li><strong><code>transfer(destination)</code></strong> — documented escalation response, but impractical in-room (no live supervisor phone) (<a href="https://goguava.ai/docs/on-escalate">on_escalate example</a>).</li>
+        <li><strong>Help desk routing</strong> — <code>onAction</code> + <code>transfer</code> pattern in <a href="https://github.com/goguava-ai/typescript-sdk/blob/main/examples/help-desk.ts">help-desk.ts</a> — Warm Brief replaces transfer with context injection for demo.</li>
+        <li><strong>BPO vertical</strong> — "Full QA and audit trails" on <a href="https://goguava.ai">goguava.ai</a> — briefing card is QA-visible context.</li>
+        <li><strong><code>onActionRequest</code> caveat</strong> — if you implement it, you must handle human escalation requests yourself; otherwise <code>onEscalate</code> handles caller requests (<a href="https://goguava.ai/docs/on-escalate">docs</a>).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Expert</strong></p>
+<pre>agent.onEscalate(async (call, event) => {
+  const brief = {
+    requestedBy: event.requestedBy,
+    policyNumber: await call.getField("policy_number"),
+    lossType: await call.getField("loss_type"),
+    lossDate: await call.getField("loss_date"),
+    summary: "Caller frustrated about adjuster delay.",
+  };
+  await call.addInfo("escalation_brief", brief);
+  // Do NOT transfer in demo room — agent stays on call with new context
+});</pre>
+        <p><strong>Console</strong> — Escalation panel renders <code>brief</code> from bridge event; show <code>requestedBy</code> badge (human vs agent).</p>
+        <p class="citations">Verify TS: <code>onEscalate</code>, <code>getField</code>, <code>addInfo</code> camelCase after <code>guava create</code>.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan (as Glass Box panel)</h2>
+      <ol class="timeline">
+        <li><span class="time">6:30–6:45</span>Implement <code>onEscalate</code> handler during FNOL Expert build</li>
+        <li><span class="time">7:30–7:50</span>Briefing card UI — fields collected + escalation reason</li>
+        <li><span class="time">7:50–8:05</span>Test phrase: "I need to speak to a supervisor"</li>
+        <li><span class="time">8:05–8:15</span>Verify agent continues with context (agent should reference brief)</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~20s insert)</h2>
+      <div class="demo-script">
+        <p>"In production you'd <code>transfer()</code> to a desk — but the demo room has no supervisor phone. Warm Brief uses <code>addInfo</code> to inject everything we've collected — policy, loss type, date — the moment <code>onEscalate</code> fires. Grace stays on the call with full context. That's the warm handoff BPOs need, visible in the supervisor console."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win</h2>
+      <ul>
+        <li>Pragmatic escalation — shows you read <code>on_escalate</code> AND <code>add_info</code> docs</li>
+        <li>Avoids demo-killing failed transfer</li>
+        <li>BPO/insurance buyers care about handoff quality — direct vertical fit</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>Agent doesn't verbalize brief — add <code>Say</code> step after <code>addInfo</code> in checklist if needed (<a href="https://goguava.ai/docs/tasks">Tasks — Say</a>)</li>
+        <li><code>onActionRequest</code> intercepts escalation — don't implement action routing unless required</li>
+        <li>Fallback: show briefing card in console only; narrate what agent "knows"</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't <code>transfer("+1...")</code> to your cell on venue Wi-Fi — unreliable</li>
+        <li>Don't build soft-transfer telephony — out of scope for 4 hours</li>
+        <li>Don't implement <code>onActionRequest</code> without handling escalation yourself</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="glassbox.html">← Glass Box</a>
+      <a href="redact.html">Redact Last-4 →</a>
+    </nav>
+  </main>
+</body>
+</html>

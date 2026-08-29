@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Chip — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 04 · FOLD IN</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Bilingual FNOL · Language mode</p>
+      <h1>Language Chip</h1>
+      <p class="hero-tagline">English/Spanish FNOL with a console language indicator — toggle via <code>setLanguageMode</code>, not a second app.</p>
+      <div class="hero-meta">
+        <span class="badge badge-fold">FOLD IN → Glass Box</span>
+        <span class="badge badge-vertical">Vertical: Insurance / Healthcare (HITRUST)</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A small UI chip in the Glass Box supervisor console showing active language (EN/ES). The Expert calls <code>setLanguageMode(primary="english", secondary=["spanish"])</code> at call start. When the caller switches to Spanish, the chip updates — inferred from transcript content since Guava admits there is no per-turn language marker.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong><code>set_language_mode()</code></strong> — primary + secondary languages; agent switches when caller speaks or requests (<a href="https://goguava.ai/docs/set-language-mode">set_language_mode docs</a>).</li>
+        <li><strong>Doc example uses insurance</strong> — "Harper Valley Property Insurance" with EN/ES on same page.</li>
+        <li><strong>Transcript caveat</strong> — "no per-turn language marker" — your chip must infer from utterance text or manual toggle, don't invent API.</li>
+        <li><strong>HITRUST/PCI languages</strong> — EN+ES only for compliant deployments; FR/DE/IT available but not HITRUST/PCI per docs.</li>
+        <li><strong>Voices</strong> — <code>grace</code> has ES/FR/DE/IT clones; auto-switches TTS on language detect.</li>
+        <li>Property insurance example: <a href="https://github.com/goguava-ai/typescript-sdk/blob/main/examples/property-insurance.ts">property-insurance.ts</a>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Expert</strong> — in <code>onCallStart</code>:</p>
+<pre>await call.setLanguageMode({
+  primary: "english",
+  secondary: ["spanish"],
+});</pre>
+        <p>Verify TS signature after <code>guava create</code> — docs show both Python and TypeScript tabs.</p>
+        <p><strong>Console</strong> — Language chip component; update on <code>onCallerSpeech</code> events using simple heuristic (Spanish function words) OR supervisor manual toggle that sends message to Expert via your bridge (custom — not a Guava API).</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan (as Glass Box add-on)</h2>
+      <ol class="timeline">
+        <li><span class="time">6:15–6:25</span>Add <code>setLanguageMode</code> to Expert <code>onCallStart</code></li>
+        <li><span class="time">7:30–7:45</span>Chip UI + heuristic from transcript events</li>
+        <li><span class="time">8:00–8:10</span>Rehearse EN→ES switch: "Prefiero hablar en español"</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~15s insert)</h2>
+      <div class="demo-script">
+        <p>"Harbor Mutual serves bilingual callers. Guava's <code>setLanguageMode</code> handles EN/ES — HITRUST-compliant languages. Watch the chip flip when I switch to Spanish. Docs note there's no per-turn language tag in transcripts — we infer it live in the supervisor console."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win</h2>
+      <ul>
+        <li>Shows regulated-industry awareness — bilingual FNOL is real insurance ops</li>
+        <li>Honest about doc limitations — eng respect for not inventing APIs</li>
+        <li>15 minutes of work, strong narrative beat</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>Language detection heuristic wrong — use manual chip toggle for demo</li>
+        <li>Room noise — pre-script the Spanish phrase</li>
+        <li>Fallback: mention <code>setLanguageMode</code> in script, show chip static at ES</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't build a separate Spanish-only app</li>
+        <li>Don't claim per-turn language tags — docs say they don't exist</li>
+        <li>Don't demo FR/DE/IT if pitching HITRUST/PCI compliance story</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="redact.html">← Redact Last-4</a>
+      <a href="badge.html">Badge Desk →</a>
+    </nav>
+  </main>
+</body>
+</html>

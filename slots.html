@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slot Board — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 06 · BENCH</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Healthcare scheduling · Calendar slots</p>
+      <h1>Slot Board</h1>
+      <p class="hero-tagline">Visual calendar board fed by <code>calendar_slot</code> search — dental scheduling with <code>DatetimeFilter</code>.</p>
+      <div class="hero-meta">
+        <span class="badge badge-bench">BENCH</span>
+        <span class="badge badge-vertical">Vertical: Healthcare scheduling</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A voice agent schedules appointments via searchable <code>calendar_slot</code> fields while a Next.js board highlights available slots as the caller narrows their preference ("Tuesday afternoon"). Uses <code>onSearchQuery</code> + <code>DatetimeFilter</code> helper — essentially the official scheduling pattern with a visual layer.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong><code>calendar_slot</code> Field</strong> — ISO-8601 choices, searchable mode per <a href="https://goguava.ai/docs/field">Field docs</a>.</li>
+        <li><strong><code>onSearchQuery</code></strong> — dynamic slot filtering per <a href="https://goguava.ai/docs/tasks">Tasks / search fields</a>.</li>
+        <li><strong><code>DatetimeFilter</code> helper</strong> — used in official example <a href="https://github.com/goguava-ai/typescript-sdk/blob/main/examples/scheduling-outbound.ts">scheduling-outbound.ts</a> (Bright Smile Dental).</li>
+        <li><strong>Healthcare scheduling</strong> — core Guava vertical on <a href="https://goguava.ai">goguava.ai</a>.</li>
+        <li><strong><code>reachPerson</code></strong> — outbound pattern in scheduling example (skip tonight — inbound WebRTC only).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Node Expert</strong> — adapt scheduling-outbound to inbound WebRTC:</p>
+<pre>import { DatetimeFilter } from "@guava-ai/guava-sdk/helpers";
+import { mockAppointmentsForFuture } from "@guava-ai/guava-sdk/example-data";
+
+const datetimeFilter = new DatetimeFilter(mockAppointmentsForFuture());
+
+agent.onSearchQuery("appointment_time", async (_call, query) => {
+  return datetimeFilter.filter(query, { maxResults: 3 });
+});</pre>
+        <p><strong>Next.js</strong> — slot board UI; highlight slots returned from search-query events on your bridge (Expert logs search results).</p>
+        <p class="citations">Inbound: use <code>listenWebrtc()</code> instead of <code>callPhone()</code>. Mock appointments from SDK example-data — no external calendar API.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan</h2>
+      <ol class="timeline">
+        <li><span class="time">5:45–6:30</span>Fork scheduling-outbound pattern · switch to <code>listenWebrtc</code></li>
+        <li><span class="time">6:30–7:30</span>Slot board UI — 3-column upcoming slots</li>
+        <li><span class="time">7:30–8:15</span>Bridge search-query results to board highlights</li>
+        <li><span class="time">8:15–8:40</span>Demo: "Something next Tuesday afternoon" → slots light up</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~60s)</h2>
+      <div class="demo-script">
+        <p>"Bright Smile Dental is Guava's own scheduling example. Slot Board adds the visual layer — as the caller searches for appointment times, the board highlights matching <code>calendar_slot</code> options filtered by <code>DatetimeFilter</code>."</p>
+        <p>[WebRTC] "I need a cleaning next week, preferably morning." — three slots highlight, caller picks one, task completes.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win (if you pick this)</h2>
+      <ul>
+        <li>Polished visual — easy for judges to follow</li>
+        <li>Directly extends official SDK example — shows you read the repo</li>
+      </ul>
+      <p><strong>Why BENCH:</strong> Guava eng has seen this demo. Outbound scheduling example is canned; adding a board doesn't fill the "supervisor / one log" gap. Likely multiple teams ship scheduling tonight.</p>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>Search query bridge timing — log slots in Expert console as backup</li>
+        <li>Outbound example uses <code>reachPerson</code> — strip for inbound WebRTC</li>
+        <li>Fallback: <code>chat()</code> mode with static slot board</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't use outbound <code>callPhone</code> — needs numbers + approval</li>
+        <li>Don't integrate real EHR/calendar — use <code>mockAppointmentsForFuture</code></li>
+        <li>Don't present as novel — acknowledge scheduling-outbound.ts lineage</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="roleplay.html">← Roleplay Studio</a>
+      <a href="warmbrief.html">Warm Brief →</a>
+    </nav>
+  </main>
+</body>
+</html>

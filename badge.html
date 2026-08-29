@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badge / Consent Desk — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 07 · BENCH</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Event intake · Consent capture</p>
+      <h1>Badge / Consent Desk</h1>
+      <p class="hero-tagline">Voice agent at the door — collect name, org, and recording consent via Fields. Wing Mic-adjacent, not a wrap.</p>
+      <div class="hero-meta">
+        <span class="badge badge-bench">BENCH</span>
+        <span class="badge badge-vertical">Vertical: Healthcare / Government intake</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A WebRTC kiosk at House of AI check-in: Grace asks for your name, organization, and whether you consent to recording for the demo. Fields populate a live badge preview on a tablet. Mirrors healthcare/government consent flows — structurally similar to event intake, but explicitly <em>not</em> wrapping Wing Mic (wingmic.xyz).</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong>Healthcare intake</strong> — named vertical on <a href="https://goguava.ai">goguava.ai</a> and <a href="https://goguava.ai/faq">FAQ</a>.</li>
+        <li><strong>Consent language</strong> — Guava's own homepage demo form includes recording consent copy (<a href="https://goguava.ai">goguava.ai</a> "Have Guava call you" section) — structurally parallel.</li>
+        <li><strong><code>multiple_choice</code> Field</strong> — yes/no consent capture per <a href="https://goguava.ai/docs/field">Field docs</a>.</li>
+        <li><strong>Task checklist</strong> — name (<code>text</code>), org (<code>text</code>), consent (<code>multiple_choice</code> choices=["yes","no"]) per <a href="https://goguava.ai/docs/tasks">Tasks</a>.</li>
+        <li><strong>WebRTC widget</strong> — embed at kiosk (<a href="https://goguava.ai/docs/webrtc-widgets">WebRTC Widget</a>).</li>
+        <li><strong>BAA / HIPAA story</strong> — consent + audit trail via Conversations API post-call (<a href="https://goguava.ai/docs/conversations-api">Conversations API</a>).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Node Expert</strong></p>
+<pre>await call.setTask({
+  taskId: "checkin",
+  objective: "Collect event check-in details for Guava Build Night.",
+  checklist: [
+    guava.Field({ key: "full_name", fieldType: "text", description: "Attendee full name" }),
+    guava.Field({ key: "organization", fieldType: "text", description: "Company or affiliation" }),
+    guava.Field({
+      key: "recording_consent",
+      fieldType: "multiple_choice",
+      choices: ["yes", "no"],
+      question: "Do you consent to recording for tonight's demo?",
+    }),
+  ],
+});</pre>
+        <p><strong>Next.js</strong> — badge card UI driven by field-complete events; optional print/export. No Wing Mic integration.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan</h2>
+      <ol class="timeline">
+        <li><span class="time">5:45–6:30</span>Scaffold Expert with check-in task · <code>listenWebrtc</code></li>
+        <li><span class="time">6:30–7:30</span>Badge preview UI — large type, consent status badge</li>
+        <li><span class="time">7:30–8:15</span>Widget on iPad/laptop at table · test 3 check-ins</li>
+        <li><span class="time">8:15–8:40</span>Meta-demo: use it to check in judges (risky — needs flawless UX)</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~60s)</h2>
+      <div class="demo-script">
+        <p>"Healthcare and government deployments start with consent. This is a voice check-in desk — name, org, recording yes/no — built on Guava Fields, not a form."</p>
+        <p>[WebRTC] "I'm Ayaan from AdvanceIQ… yes, I consent." — badge renders live.</p>
+        <p>"Post-call, Conversations API stores the audit trail. Same primitives as patient intake — applied to tonight's room."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win (if you pick this)</h2>
+      <ul>
+        <li>Meta — demo IS the event check-in (memorable if flawless)</li>
+        <li>Consent story resonates with regulated verticals</li>
+        <li>Simple checklist — low Expert complexity</li>
+      </ul>
+      <p><strong>Why BENCH:</strong> Too close to meta-gimmick; doesn't showcase supervisor/"one log" gap. Wing Mic adjacency risks looking like a clone. Glass Box tells a stronger Guava product story.</p>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>Room noise at check-in — bad first impression</li>
+        <li>Consent "no" path — need graceful hangup via <code>hangup()</code></li>
+        <li>Fallback: pre-recorded check-in via <code>roleplay()</code></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't integrate with or wrap Wing Mic</li>
+        <li>Don't build AdvanceIQ / Power BI features</li>
+        <li>Don't use outbound SMS for badge delivery — WebRTC only</li>
+        <li>Don't skip consent no-path — regulated story requires it</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="language.html">← Language Chip</a>
+      <a href="index.html">All ideas →</a>
+    </nav>
+  </main>
+</body>
+</html>

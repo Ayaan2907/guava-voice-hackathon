@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glass Box — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 01 · PICK</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Insurance FNOL · Supervisor console</p>
+      <h1>Glass Box</h1>
+      <p class="hero-tagline">Live FNOL supervisor console for Harbor Mutual — see every field, transcript turn, and escalation as the caller speaks.</p>
+      <div class="hero-meta">
+        <span class="badge badge-pick">PICK</span>
+        <span class="badge badge-vertical">Vertical: Insurance FNOL</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A split-screen demo: left side is a Guava WebRTC voice call collecting a first notice of loss; right side is a Next.js supervisor console that lights up checklist fields in real time, shows a live transcript via speech callbacks, redacts sensitive digits in the UI, and surfaces a briefing card when the caller escalates — all without leaving the call.</p>
+      <p>This is the product surface Guava markets as <em>"One platform. One log. One accountable team"</em> on their homepage, but they ship code-first Experts without a live floor UI.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong>Insurance FNOL</strong> is a named vertical on <a href="https://goguava.ai">goguava.ai</a> — "Claims captured. Adjusters working cases, not voicemail."</li>
+        <li><strong>Task + Field checklists</strong> drive structured intake per <a href="https://goguava.ai/docs/tasks">Tasks docs</a> and <a href="https://goguava.ai/docs/field">Field docs</a> — same pattern as <a href="https://github.com/goguava-ai/typescript-sdk/blob/main/examples/restaurant-waitlist.ts">restaurant-waitlist.ts</a>, applied to FNOL fields.</li>
+        <li><strong>Speech surveillance</strong> — docs explicitly recommend <code>onCallerSpeech</code> / <code>onAgentSpeech</code> for "call surveillance or real-time transcription logging" (<a href="https://goguava.ai/docs/on-caller-speech">on_caller_speech</a>, <a href="https://goguava.ai/docs/on-agent-speech">on_agent_speech</a>).</li>
+        <li><strong>Escalation + context</strong> — <code>onEscalate</code> fires on human or agent request (<a href="https://goguava.ai/docs/on-escalate">on_escalate</a>); <code>addInfo()</code> injects supervisor briefing that persists for the call (<a href="https://goguava.ai/docs/add-info">add_info</a>).</li>
+        <li><strong>WebRTC in-room</strong> — <code>listenWebrtc()</code> + embed widget (<a href="https://goguava.ai/docs/webrtc-widgets">WebRTC Widget</a>, <a href="https://goguava.ai/docs/agent">Agent entrypoints</a>).</li>
+        <li><strong>Post-call audit</strong> — Conversations API for transcript/recording after hangup (<a href="https://goguava.ai/docs/conversations-api">Conversations API</a>) — show the "One Log" card populated from <code>GET /v1/conversations/{call_id}/transcript</code>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card card-grid card-grid-2">
+        <div>
+          <p><strong>Node Expert</strong> (<code>expert/</code>)</p>
+          <ul>
+            <li><code>guava create harbor-fnol</code> → TypeScript Expert</li>
+            <li><code>agent.onCallStart</code> → <code>setTask("fnol", checklist=[...])</code></li>
+            <li><code>agent.onTaskComplete</code> → log fields, optional <code>hangup()</code></li>
+            <li><code>agent.onCallerSpeech</code> / <code>onAgentSpeech</code> → push to SSE/WebSocket bridge</li>
+            <li><code>agent.onEscalate</code> → <code>addInfo("supervisor_brief", {...})</code> — no <code>transfer()</code> in demo room</li>
+            <li><code>agent.listenWebrtc(code)</code> — verify TS method name after <code>guava create</code></li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Next.js console</strong> (<code>console/</code>)</p>
+          <ul>
+            <li>Field checklist UI — state from Expert bridge events</li>
+            <li>Live transcript pane — caller/agent utterances</li>
+            <li>Redaction display for <code>sensitive</code> fields (mask last-4 in UI even before post-call API)</li>
+            <li>Escalation banner + briefing card when <code>onEscalate</code> fires</li>
+            <li>Guava widget script tag for WebRTC call surface</li>
+            <li>Post-demo: fetch transcript via Conversations API (Bearer API key, server-side route)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="citations">Bridge: lightweight WebSocket or Server-Sent Events from Expert stdout — no undocumented Guava REST for live events. TS SDK handlers: verify camelCase (<code>onCallerSpeech</code>) in generated project.</p>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan</h2>
+      <ol class="timeline">
+        <li><span class="time">5:30–5:45</span>Check in · <code>guava login</code> · skim <a href="https://goguava.ai/docs/quickstart">quickstart</a> · claim corner outlet</li>
+        <li><span class="time">5:45–6:15</span><code>guava create harbor-fnol</code> · FNOL checklist: policy # (<code>digit_sequence</code>), loss date (<code>date</code>), loss type (<code>multiple_choice</code>), description (<code>text</code>), callback (<code>text</code>)</li>
+        <li><span class="time">6:15–6:45</span>Wire <code>onCallerSpeech</code> + <code>onAgentSpeech</code> + <code>onTaskComplete</code> → JSON events to console · <code>listenWebrtc</code> · test at debug-webrtc</li>
+        <li><span class="time">6:45–7:30</span>Next.js console: field grid, transcript, redaction mask · embed widget with <code>grtc-</code> code</li>
+        <li><span class="time">7:30–7:50</span><code>onEscalate</code> → <code>addInfo</code> briefing panel · fold Language Chip toggle if time</li>
+        <li><span class="time">7:50–8:15</span>Polish · rehearse demo · post-call One Log card via Conversations API</li>
+        <li><span class="time">8:15–8:40</span>Final WebRTC smoke test · screenshot console · backup mock mode</li>
+        <li><span class="time">8:40–9:30</span>Demo to judges · emphasize supervisor visibility + compliance story</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~75s)</h2>
+      <div class="demo-script">
+        <p>"Harbor Mutual gets FNOL spikes after storms. Guava's Expert collects the claim — but adjusters today have no live floor view. Glass Box is that missing supervisor console."</p>
+        <p>[Start WebRTC call] "I'm reporting water damage from yesterday…" — watch fields turn green as policy number, date, and loss type complete. Transcript streams on the right.</p>
+        <p>"When I say 'connect me to a supervisor,' <code>onEscalate</code> fires — we inject a briefing via <code>addInfo</code> so Grace stays on the call with context, no broken transfer in this room."</p>
+        <p>[Hang up] "Post-call, Conversations API gives us the same call in One Log — transcript with sensitive fields redacted per Guava's Field docs. This is the regulated runtime they sell, plus the UI they don't ship."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win</h2>
+      <ul>
+        <li><strong>Fills their marketing gap</strong> — "one log" + "supervisor agent" on homepage, but no live dashboard in SDK examples.</li>
+        <li><strong>Right vertical</strong> — insurance FNOL is Guava's bread-and-butter, not another waitlist clone.</li>
+        <li><strong>Uses rare callbacks correctly</strong> — speech handlers for surveillance per docs, not prompt hacking.</li>
+        <li><strong>Compliance story</strong> — sensitive <code>digit_sequence</code>, redaction visible live + in stored transcript.</li>
+        <li><strong>Code-first credibility</strong> — Expert in Node, console in Next — matches architecture (<a href="https://goguava.ai/docs/architecture-overview">architecture overview</a>).</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Risks & fallback ladder</h2>
+      <ol>
+        <li><code>agent.chat()</code> — terminal text session, pipe events to console</li>
+        <li><code>agent.callLocal()</code> — laptop mic if WebRTC flaky</li>
+        <li><a href="https://app.goguava.ai/debug-webrtc">debug-webrtc</a> — isolate widget vs Expert</li>
+        <li><code>agent.roleplay("Storm caller reporting FNOL…")</code> — automated demo if audio dies (<a href="https://goguava.ai/docs/agent-testing">agent testing</a>)</li>
+        <li>Mock bridge — replay canned JSON events into console UI</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't run Expert inside Next.js API routes — SDK is Node Expert process, not edge</li>
+        <li>Don't use outbound/SMS — needs approval; WebRTC only tonight</li>
+        <li>Don't invent live webhooks — Conversations API is post-call only</li>
+        <li>Don't clone restaurant-waitlist verbatim — FNOL + supervisor UI is the differentiator</li>
+        <li>Don't <code>transfer()</code> to a real phone in the demo room — use <code>addInfo</code> stay-on-call</li>
+        <li>Don't wrap Wing Mic or build AdvanceIQ/Power BI chat</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="index.html">← All ideas</a>
+      <a href="warmbrief.html">Warm Brief →</a>
+    </nav>
+  </main>
+</body>
+</html>

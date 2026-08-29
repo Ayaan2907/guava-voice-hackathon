@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redact Last-4 — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 03 · FOLD IN</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">PCI compliance theater · Sensitive fields</p>
+      <h1>Redact Last-4</h1>
+      <p class="hero-tagline">Show Guava's redaction pipeline live — collect last-four via <code>digit_sequence</code> + <code>sensitive</code>, never real PAN.</p>
+      <div class="hero-meta">
+        <span class="badge badge-fold">FOLD IN → Glass Box</span>
+        <span class="badge badge-vertical">Vertical: Banking / PCI</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A focused compliance demo within the supervisor console: when the FNOL or verification flow collects account last-four or a test card number, the console shows the raw value briefly then masks it — mirroring what Guava does to transcripts and recordings. Side-by-side: live UI mask vs post-call transcript from Conversations API proving redaction persisted.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong>Sensitive fields</strong> — <code>sensitive=True</code> redacts from stored transcripts and silences audio in recordings (<a href="https://goguava.ai/docs/field">Field docs — Sensitive Fields</a>).</li>
+        <li><strong><code>digit_sequence</code></strong> — for account/ID/card numbers; docs show SSN last-four example with <code>digit_sequence</code> + <code>sensitive</code>.</li>
+        <li><strong>PCI path</strong> — full card via <code>digit_sequence</code> + <code>sensitive</code>; CVV via dedicated <code>cvv</code> field type with session-wide log/diagnostic suppression — same doc page.</li>
+        <li><strong>Banking vertical</strong> — KYC/identity verification on <a href="https://goguava.ai">goguava.ai</a> homepage.</li>
+        <li><strong>Certifications</strong> — PCI DSS Level 1 marketed on <a href="https://goguava.ai/faq">FAQ</a> and all plans.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Expert</strong> — add to Glass Box checklist:</p>
+<pre>guava.Field({
+  key: "account_last_four",
+  question: "What are the last four digits of the account on file?",
+  fieldType: "digit_sequence",
+  sensitive: true,
+})</pre>
+        <p><strong>Console</strong> — on <code>onTaskComplete</code> event for that field, display <code>••••1234</code> in supervisor pane. After call, fetch <code>GET /v1/conversations/{call_id}/transcript</code> — show redacted turn text.</p>
+        <p class="citations">Verify TS property names (<code>fieldType</code>, <code>sensitive</code>) in generated SDK. Never collect real PAN — use fictional "4111…" spoken as test only, or skip full card entirely.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan (as Glass Box panel)</h2>
+      <ol class="timeline">
+        <li><span class="time">5:45–6:00</span>Add <code>account_last_four</code> field to FNOL checklist during Expert scaffold</li>
+        <li><span class="time">7:00–7:20</span>Console redaction component — mask on field complete event</li>
+        <li><span class="time">7:20–7:35</span>Post-call transcript fetch — highlight redacted spans in One Log card</li>
+        <li><span class="time">8:00–8:15</span>Rehearse 15s PCI beat inside main demo script</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~20s insert)</h2>
+      <div class="demo-script">
+        <p>"For regulated calls, Guava redacts sensitive <code>digit_sequence</code> fields from transcripts and recordings. Watch the supervisor pane mask last-four the moment it's captured — then after hangup, the Conversations API transcript shows the same redaction. We're using test digits only — never real card data in a hackathon room."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win</h2>
+      <ul>
+        <li>Makes abstract compliance docs <em>visible</em> — judges see redaction, not just hear "we're PCI."</li>
+        <li>Differentiates from waitlist demo — touches banking/PCI story Guava sells.</li>
+        <li>Zero extra Expert — one field, one UI panel, high signal.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>If live redaction hard to verify — screenshot pre/post transcript from dashboard Conversations view</li>
+        <li>If <code>cvv</code> field overkill — stick to <code>digit_sequence</code> + <code>sensitive</code> per docs</li>
+        <li>Fallback: static before/after transcript JSON in console mock</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Never collect real primary account numbers or CVV</li>
+        <li>Don't build a standalone PCI app — fold into Glass Box</li>
+        <li>Don't claim HITRUST/PCI audit — cite Guava's certifications, show field-level behavior</li>
+        <li>Don't use <code>cvv</code> field unless demonstrating session-wide suppression — adds scope</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="warmbrief.html">← Warm Brief</a>
+      <a href="roleplay.html">Roleplay Studio →</a>
+    </nav>
+  </main>
+</body>
+</html>

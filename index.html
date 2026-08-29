@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Build Night Brief — Guava Voice AI Hackathon SF</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Sat Aug 29 · House of AI · 4 hrs</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Guava Voice AI Hackathon · Build Night SF</p>
+      <h1>Seven ideas. One night. Ship the supervisor console they don't market.</h1>
+      <p class="hero-tagline">Ranked playbooks for Ayaan — each grounded in real Guava SDK primitives, docs, and TypeScript examples. No invented APIs.</p>
+      <div class="hero-meta">
+        <span class="badge badge-pick">#1 Pick: Glass Box</span>
+        <span class="badge badge-vertical">Builder: github.com/ayaan2907</span>
+      </div>
+    </div>
+
+    <div class="constraint-box">
+      <h2>Tonight's constraints</h2>
+      <ul>
+        <li><strong>When:</strong> 5:30–9:30 PM PT · House of AI, 40 Boardman Pl, SoMa · <a href="https://luma.com/678a9u02">Luma</a></li>
+        <li><strong>Format:</strong> In-person · build a voice agent <em>using Guava</em> · ship + demo same night · up to $3,000 cash</li>
+        <li><strong>Channel:</strong> WebRTC only — <code>listenWebrtc()</code> + widget at <a href="https://app.goguava.ai/debug-webrtc">app.goguava.ai/debug-webrtc</a>. No SMS/outbound (needs approval).</li>
+        <li><strong>Stack split:</strong> Node Expert (<code>@guava-ai/guava-sdk</code>) is the agent runtime. Next.js is a console/UI — not the Expert. JS SDK is Node-only per architecture.</li>
+        <li><strong>Off limits:</strong> Wing Mic wrap · Power BI / AdvanceIQ financial-data chat · collecting real PAN · REST agent creation · live webhooks (Conversations API is post-call only)</li>
+      </ul>
+    </div>
+
+    <section>
+      <h2>Ranked ideas</h2>
+      <ol class="rank-list">
+        <li class="rank-item">
+          <span class="rank-num">01</span>
+          <a href="glassbox.html" class="title-link">Glass Box</a>
+          <span class="rank-verdict" style="color: var(--pick);">PICK</span>
+          <p class="rank-summary">Live FNOL supervisor console — fields light up, redaction visible, escalate → <code>addInfo</code> briefing card. Matches Guava's "one log" gap.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">02</span>
+          <a href="warmbrief.html" class="title-link">Warm Brief</a>
+          <span class="rank-verdict" style="color: var(--fold);">FOLD IN</span>
+          <p class="rank-summary">Human briefing on escalate — stay on call with <code>addInfo</code> instead of fragile <code>transfer()</code> in-room.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">03</span>
+          <a href="redact.html" class="title-link">Redact Last-4</a>
+          <span class="rank-verdict" style="color: var(--fold);">FOLD IN</span>
+          <p class="rank-summary">PCI theater with <code>digit_sequence</code> + <code>sensitive</code> — demo redaction live on the supervisor pane, never real card data.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">04</span>
+          <a href="language.html" class="title-link">Language Chip</a>
+          <span class="rank-verdict" style="color: var(--fold);">FOLD IN</span>
+          <p class="rank-summary">EN/ES FNOL toggle via <code>setLanguageMode</code> — chip in console, not a second app.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">05</span>
+          <a href="roleplay.html" class="title-link">Roleplay Studio</a>
+          <span class="rank-verdict" style="color: var(--bench);">BENCH</span>
+          <p class="rank-summary">Visual <code>roleplay()</code> + <code>evaluate()</code> — strong DX, weaker live-voice wow for judges.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">06</span>
+          <a href="slots.html" class="title-link">Slot Board</a>
+          <span class="rank-verdict" style="color: var(--bench);">BENCH</span>
+          <p class="rank-summary"><code>calendar_slot</code> + <code>DatetimeFilter</code> — too close to canned dental/scheduling demo.</p>
+        </li>
+        <li class="rank-item">
+          <span class="rank-num">07</span>
+          <a href="badge.html" class="title-link">Badge / Consent Desk</a>
+          <span class="rank-verdict" style="color: var(--bench);">BENCH</span>
+          <p class="rank-summary">Event intake with consent Field — Wing Mic-adjacent but not a wrap; healthcare/gov story.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Recommended build</h2>
+      <div class="card">
+        <p><strong>Ship Glass Box</strong> as the demo. Fold Warm Brief, Redact Last-4, and Language Chip into the same console as panels — one Expert, one WebRTC code, one supervisor UI. Judges see insurance FNOL (their vertical), compliance redaction, bilingual intake, and escalation handling in a single 90-second loop.</p>
+        <p class="citations" style="margin-top: 1rem; margin-bottom: 0;">Sources: <a href="https://goguava.ai">goguava.ai</a> · <a href="https://goguava.ai/docs">docs</a> · <a href="https://github.com/goguava-ai/typescript-sdk">typescript-sdk examples</a></p>
+      </div>
+    </section>
+
+    <p class="footer-note">Guava Build Night Brief · Static site · open index.html locally</p>
+  </main>
+</body>
+</html>

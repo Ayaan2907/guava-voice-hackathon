@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roleplay Studio — Build Night Brief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="logo">Build Night <span>Brief</span></a>
+    <span class="meta-pill">Idea 05 · BENCH</span>
+  </header>
+
+  <main>
+    <div class="hero">
+      <p class="hero-eyebrow">Agent testing · Developer experience</p>
+      <h1>Roleplay Studio</h1>
+      <p class="hero-tagline">Visual wrapper around <code>agent.roleplay()</code> and <code>session.evaluate()</code> — ship test rubrics, not live voice wow.</p>
+      <div class="hero-meta">
+        <span class="badge badge-bench">BENCH</span>
+        <span class="badge badge-vertical">Vertical: DX / QA</span>
+      </div>
+    </div>
+
+    <section>
+      <h2>What it is</h2>
+      <p>A Next.js page that triggers automated caller roleplays against your Expert, displays the transcript, and runs pass/fail rubrics via <code>session.evaluate()</code>. Think "pytest UI" for voice agents — valuable to Guava eng, less theatrical for a 90-second live demo.</p>
+    </section>
+
+    <section>
+      <h2>Why it matches real Guava</h2>
+      <ul>
+        <li><strong><code>agent.roleplay(prompt)</code></strong> — LLM improvises as caller; handlers fire like real calls (<a href="https://goguava.ai/docs/agent-testing">Automated Testing</a>).</li>
+        <li><strong><code>session.evaluate(pass_criteria, fail_criteria)</code></strong> — rubric assessment on returned <code>TestSession</code>.</li>
+        <li><strong><code>agent.test()</code></strong> — precise utterance injection alternative for scripted demos.</li>
+        <li><strong><code>MockCall</code></strong> — unit-test individual handlers (<code>onActionRequest</code>, etc.).</li>
+        <li><strong><code>agent.patch()</code></strong> — override handlers for scenario testing without modifying source.</li>
+        <li>Reference implementation: <a href="https://github.com/goguava-ai/typescript-sdk/blob/main/examples/help-desk.ts">help-desk.ts</a> + test patterns in SDK repo.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Architecture</h2>
+      <div class="card">
+        <p><strong>Node Expert</strong> — expose HTTP endpoint (your own, not Guava) that runs:</p>
+<pre>const session = await agent.roleplay(
+  "You are an angry caller reporting hail damage to your roof."
+);
+session.evaluate({
+  passCriteria: ["Agent collected loss date and policy number."],
+  failCriteria: ["Agent promised a specific payout amount."],
+});
+return { transcript: session.getTranscript(), ... };</pre>
+        <p><strong>Next.js</strong> — form for roleplay prompt + rubric lines → calls your endpoint → renders transcript + pass/fail badges.</p>
+        <p class="citations">No Guava REST for roleplay — must invoke SDK from Node Expert process.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>4-hour execution plan</h2>
+      <ol class="timeline">
+        <li><span class="time">5:45–6:30</span>Port help-desk Expert · add FNOL task · verify roleplay completes</li>
+        <li><span class="time">6:30–7:30</span>Thin Express route wrapping <code>roleplay()</code> + <code>evaluate()</code></li>
+        <li><span class="time">7:30–8:30</span>Next UI: prompt input, rubric tags, transcript viewer, pass/fail</li>
+        <li><span class="time">8:30–9:00</span>Pre-run 2–3 canned scenarios for demo reliability</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Demo script (~60s)</h2>
+      <div class="demo-script">
+        <p>"Guava agents are code-first — testing should be too. Roleplay Studio runs <code>agent.roleplay()</code> with an LLM caller, then <code>session.evaluate()</code> against your rubric."</p>
+        <p>[Click Run] "Angry hail-damage caller" — transcript scrolls, fields complete, rubric shows pass on 'collected policy number', fail if agent hallucinates payout.</p>
+        <p>"This is how you'd CI voice agents — but tonight I'd rather show you live WebRTC with Glass Box."</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>How you win (if you pick this)</h2>
+      <ul>
+        <li>Speaks directly to Guava eng / developer audience</li>
+        <li>Proves you read agent-testing docs deeply</li>
+        <li>Reliable demo — no mic, no Wi-Fi audio issues</li>
+      </ul>
+      <p><strong>Why BENCH:</strong> Judges want to <em>hear</em> voice AI tonight. Roleplay is silent text — strong backup, weak headline.</p>
+    </section>
+
+    <section>
+      <h2>Risks & fallback</h2>
+      <ul>
+        <li>Roleplay latency — pre-run sessions, show cached results if live run slow</li>
+        <li>Evaluate flakiness — keep rubrics simple and observable</li>
+        <li>Fallback: terminal output of <code>guava test</code> / pytest if UI breaks</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>What NOT to do</h2>
+      <ul class="dont-list">
+        <li>Don't ship this as primary if Glass Box is viable — voice wow wins hackathons</li>
+        <li>Don't invent Guava test APIs — only documented <code>roleplay</code>, <code>test</code>, <code>evaluate</code></li>
+        <li>Don't skip live voice entirely — judges expect WebRTC</li>
+      </ul>
+    </section>
+
+    <nav class="page-nav">
+      <a href="language.html">← Language Chip</a>
+      <a href="slots.html">Slot Board →</a>
+    </nav>
+  </main>
+</body>
+</html>
