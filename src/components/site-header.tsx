@@ -15,6 +15,9 @@ export function SiteHeader({ dark }: { dark?: boolean }) {
         <Link href="/desks" className="text-muted-foreground hover:text-foreground">
           Desks
         </Link>
+        <Link href="/brief" className="text-muted-foreground hover:text-foreground">
+          Locked brief
+        </Link>
         <Link href="/platform" className="text-muted-foreground hover:text-foreground">
           How it works
         </Link>
