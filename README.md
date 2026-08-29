@@ -2,6 +2,10 @@
 
 The negotiation desk any business can turn on.
 
+**Idea status:** LOCKED — see [docs/LOCKED.md](docs/LOCKED.md).
+
+**Repository:** https://cursor.com/codebase/ayaan2907/guava-voice-hackathon (private; change visibility in settings on that page)
+
 Pact is a **multi-tenant** inbound + outbound voice desk. A company signs up, we load their playbook, documents, and authority, and they get:
 
 - a **public web line** (`/line/[slug]`) for anyone who calls that business from the site
@@ -11,6 +15,28 @@ Pact is a **multi-tenant** inbound + outbound voice desk. A company signs up, we
 Insurance (Northstar Mutual) is the live demo vertical. Logistics (Harbor Lane Freight) is a second tenant in the same app. Healthcare and e-commerce are templates on signup.
 
 This is not a single voice agent. It is the platform you would put in front of the next business.
+
+## Clone
+
+```bash
+# Install the Origin CLI
+curl -fsSL https://downloads.cursor.com/origin/install.sh | sh
+
+# Sign in (also sets up git credentials)
+origin auth login
+
+# Clone the repository
+origin repo clone ayaan2907/guava-voice-hackathon
+```
+
+If `origin` is not found after install, persist `~/.local/bin` on PATH:
+
+```bash
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Origin CLI docs: https://cursor.com/docs/origin/cli
 
 ## Run locally
 
