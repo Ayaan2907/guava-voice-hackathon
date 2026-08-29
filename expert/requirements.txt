@@ -1,0 +1,4 @@
+# Pact Expert
+# pip install guava-sdk
+# Required at the venue when you want live WebRTC rather than the built-in simulator.
+guava-sdk>=0.37.0

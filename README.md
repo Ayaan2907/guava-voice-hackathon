@@ -1,47 +1,57 @@
-# Guava Build Night Brief
+# Pact
 
-Static playbook site for **Guava Voice AI Hackathon Build Night SF** (Sat Aug 29, 2026). Seven hack ideas ranked with execution plans grounded in real Guava docs — no build step required.
+The negotiation desk any business can turn on.
 
-## Open locally
+Pact is a **multi-tenant** inbound + outbound voice desk. A company signs up, we load their playbook, documents, and authority, and they get:
 
-From this directory:
+- a **public web line** (`/line/[slug]`) for anyone who calls that business from the site
+- an **operator console** (`/desk/[slug]`) that watches the live call, fills structured fields, and **whispers** instructions without taking the audio
+- an **outbound queue** for renewals, lapses, follow-ups
+
+Insurance (Northstar Mutual) is the live demo vertical. Logistics (Harbor Lane Freight) is a second tenant in the same app. Healthcare and e-commerce are templates on signup.
+
+This is not a single voice agent. It is the platform you would put in front of the next business.
+
+## Run locally
 
 ```bash
-# macOS
-open index.html
-
-# Linux
-xdg-open index.html
-
-# Or serve on a port (optional)
-python3 -m http.server 8765
-# → http://localhost:8765
+npm install
+npm run dev
+# → http://127.0.0.1:43147
 ```
 
-No npm install. No framework. Just HTML + CSS.
+In another terminal, after you have a Guava key and WebRTC codes:
 
-## Pages
+```bash
+export GUAVA_API_KEY=...
+export PACT_URL=http://127.0.0.1:43147
+pip install -r expert/requirements.txt
+python expert/main.py
+```
 
-| File | Idea | Verdict |
-|------|------|---------|
-| `index.html` | Hub — ranked list + tonight's constraints | — |
-| `glassbox.html` | Live FNOL supervisor console | **PICK** |
-| `warmbrief.html` | Escalate → `addInfo` briefing card | FOLD IN |
-| `redact.html` | PCI redaction theater | FOLD IN |
-| `language.html` | EN/ES language chip | FOLD IN |
-| `roleplay.html` | Visual `roleplay()` + `evaluate()` | BENCH |
-| `slots.html` | Calendar slot board | BENCH |
-| `badge.html` | Event consent desk | BENCH |
+Paste `grtc-…` codes into each tenant's **Line** tab. Until then, the desk runs a built-in simulator so you can demo whisper, fields, bilingual gloss, and outbound without a key.
 
-## Recommended tonight
+## Demo path
 
-Ship **Glass Box** with Warm Brief, Redact Last-4, and Language Chip folded in as console panels. Node Expert + Next.js console + WebRTC only.
+1. Open the homepage, then **Open Northstar**.
+2. In another window, open **public line** and talk (or click Simulate inbound on the desk).
+3. When the caller asks for a manager, type a whisper — the agent stays on the call.
+4. Place an outbound call to Maria (renewal) or Priya (Spanish).
+5. **Start a desk** and sign up a clinic. Same product, new tenant.
 
-## Sources (verified)
+## Stack
 
-- Docs: https://goguava.ai/docs
-- Examples: https://github.com/goguava-ai/typescript-sdk
-- Dashboard: https://app.goguava.ai
-- Event: https://luma.com/678a9u02
+- Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui — control plane and UI
+- In-memory tenant/session store (JSON on disk for tenants)
+- Python Expert (`guava-sdk`) — Dialog System steering via documented APIs only
+- Guava WebRTC widget for real inbound audio when a `grtc-` code is set
 
-Builder: [Ayaan](https://github.com/ayaan2907)
+## Guava mapping
+
+See [docs/pact-design.md](docs/pact-design.md) and `/platform` in the app.
+
+Honest constraints: no 3-way audio (`transfer()` leaves the agent), Conversations API is post-call, outbound phone/SMS need approval, widget does not resume across remounts.
+
+## Event
+
+Built for Guava Voice AI Hackathon Build Night SF · 29 Aug 2026 · House of AI.
