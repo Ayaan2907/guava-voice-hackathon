@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTenant, newId, upsertTenant } from "@/lib/store";
+import { ensureStore, getTenant, newId, upsertTenant } from "@/lib/store";
 import { slugify } from "@/lib/slug";
 import { templateFor } from "@/lib/templates";
 import type { Vertical } from "@/lib/types";
@@ -13,6 +13,7 @@ export async function POST(req: Request) {
     city?: string;
     webrtcCode?: string;
   };
+  await ensureStore();
   const name = (body.name ?? "").trim();
   if (!name) {
     return NextResponse.json({ error: "Business name is required." }, { status: 400 });

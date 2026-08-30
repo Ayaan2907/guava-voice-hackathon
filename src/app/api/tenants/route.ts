@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { listTenants } from "@/lib/store";
+import { ensureStore, listTenants } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  await ensureStore();
   return NextResponse.json({ tenants: listTenants() });
 }

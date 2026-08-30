@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { setSessionCookie } from "@/lib/auth";
-import { mintWebrtcCode } from "@/lib/mint-webrtc";
-import { getTenant, getUserByEmail, newId, upsertTenant, upsertUser } from "@/lib/store";
+import { ensureStore, getTenant, getUserByEmail, newId, upsertTenant, upsertUser } from "@/lib/store";
 import { slugify } from "@/lib/slug";
 import { templateFor } from "@/lib/templates";
 import type { Vertical } from "@/lib/types";
@@ -16,6 +15,7 @@ export async function POST(req: Request) {
     city?: string;
     vertical?: Vertical;
   };
+  await ensureStore();
   const email = (body.email ?? "").trim();
   const password = body.password ?? "";
   const name = (body.name ?? "").trim();
@@ -41,12 +41,5 @@ export async function POST(req: Request) {
     orgSlug: slug,
   });
   await setSessionCookie(email, slug);
-
-  void mintWebrtcCode().then((code) => {
-    if (!code) return;
-    const fresh = getTenant(slug);
-    if (fresh) upsertTenant({ ...fresh, webrtcCode: code });
-  });
-
   return NextResponse.json({ slug, onboardComplete: false });
 }

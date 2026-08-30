@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addLine, getSession } from "@/lib/store";
+import { addLine, ensureStore, getSession } from "@/lib/store";
 import type { TranscriptRole } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +9,7 @@ export async function POST(
   ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
+  await ensureStore();
   const session = getSession(id);
   if (!session) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (session.status === "ended") {

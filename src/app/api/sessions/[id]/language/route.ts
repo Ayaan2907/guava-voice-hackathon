@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSession, patchSession } from "@/lib/store";
+import { ensureStore, getSession, patchSession } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -8,6 +8,7 @@ export async function POST(
   ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
+  await ensureStore();
   const session = getSession(id);
   if (!session) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const body = (await req.json()) as { language?: string };

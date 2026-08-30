@@ -1,4 +1,4 @@
-import { addLine, getSession, patchSession } from "@/lib/store";
+import { addLine, ensureStore, getSession, patchSession } from "@/lib/store";
 import { publish } from "@/lib/bus";
 import { NextResponse } from "next/server";
 
@@ -11,6 +11,7 @@ export async function POST(
   ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
+  await ensureStore();
   const session = getSession(id);
   if (!session) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const body = (await req.json()) as { text?: string };
@@ -26,7 +27,7 @@ export async function POST(
     at: new Date().toISOString(),
   });
 
-  // Live Expert: POST send_instruction. Simulation: pendingWhisper is consumed on the next agent beat.
+  // Live Expert: send_instruction. No simulator path.
   try {
     await fetch(`${EXPERT}/whisper`, {
       method: "POST",

@@ -1,10 +1,11 @@
 import { subscribe } from "@/lib/bus";
-import { getSession, listSessions } from "@/lib/store";
+import { ensureStore, getSession, listSessions } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
+  await ensureStore();
   const url = new URL(req.url);
   const tenant = url.searchParams.get("tenant");
   if (!tenant) {

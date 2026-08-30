@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTenant, upsertTenant } from "@/lib/store";
+import { ensureStore, getTenant, upsertTenant } from "@/lib/store";
 import type { Tenant } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -8,6 +8,7 @@ export async function GET(
   _req: Request,
   ctx: { params: Promise<{ slug: string }> },
 ) {
+  await ensureStore();
   const { slug } = await ctx.params;
   const tenant = getTenant(slug);
   if (!tenant) return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -18,6 +19,7 @@ export async function PATCH(
   req: Request,
   ctx: { params: Promise<{ slug: string }> },
 ) {
+  await ensureStore();
   const { slug } = await ctx.params;
   const tenant = getTenant(slug);
   if (!tenant) return NextResponse.json({ error: "Not found" }, { status: 404 });
