@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { EMAIL_COOKIE, SLUG_COOKIE } from "./session-cookies";
-import { getUserByEmail } from "./store";
+import { ensureStore, getUserByEmail } from "./store";
 
 const cookieOpts = {
   httpOnly: true,
@@ -22,6 +22,7 @@ export async function clearSessionCookie() {
 }
 
 export async function currentOrg() {
+  await ensureStore();
   const jar = await cookies();
   const email = jar.get(EMAIL_COOKIE)?.value ?? "";
   const slug = jar.get(SLUG_COOKIE)?.value ?? "";
@@ -31,7 +32,8 @@ export async function currentOrg() {
   return { user, slug };
 }
 
-export function demoPasswordOk(email: string, password: string) {
+export async function demoPasswordOk(email: string, password: string) {
+  await ensureStore();
   const user = getUserByEmail(email);
   return Boolean(user && user.password === password);
 }

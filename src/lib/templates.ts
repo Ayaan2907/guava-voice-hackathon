@@ -40,6 +40,8 @@ export function northstarMutual(): Tenant {
     brandColor: "#1f4d3a",
     languages: { primary: "english", secondary: ["spanish"] },
     webrtcCode: "local-northstar",
+    inboundPhone: "",
+    outboundFromNumber: "",
     openingScript:
       "This call may be recorded for quality and claim handling. You're speaking with Grace at Northstar Mutual. How can I help you today?",
     persona:
@@ -204,6 +206,9 @@ Non-pay lapse: we can reinstate within 14 days with payment plus a $25 fee. Afte
     inboundEnabled: true,
     outboundEnabled: true,
     onboardComplete: true,
+    inboundBrief: "Handle inbound callers. Capture the checklist. Negotiate inside the cap.",
+    outboundBrief: "On pickup, say why you called, complete the checklist, stay inside the cap.",
+    pendingCall: null,
     createdAt: now(),
   };
 }
@@ -221,6 +226,8 @@ export function harborLane(): Tenant {
     brandColor: "#1c3d5a",
     languages: { primary: "english", secondary: ["spanish"] },
     webrtcCode: "local-harbor-lane",
+    inboundPhone: "",
+    outboundFromNumber: "",
     openingScript:
       "Harbor Lane Freight, this is Grace. This line is recorded. Are you calling about an appointment, a container, or a detention bill?",
     persona:
@@ -309,6 +316,9 @@ After 14:00 local, same-day in-gate is not offered.`,
     inboundEnabled: true,
     outboundEnabled: true,
     onboardComplete: true,
+    inboundBrief: "Handle inbound callers. Capture the checklist. Negotiate inside the cap.",
+    outboundBrief: "On pickup, say why you called, complete the checklist, stay inside the cap.",
+    pendingCall: null,
     createdAt: now(),
   };
 }
@@ -337,6 +347,8 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       brandColor: "#3d4a3a",
       languages: { primary: "english", secondary: ["spanish"] },
       webrtcCode: `local-${slug}`,
+      inboundPhone: "",
+      outboundFromNumber: "",
       openingScript:
         "This is a recorded clinical-administrative line. I'm Grace. I can help with scheduling and prior-auth status. I cannot give medical advice.",
       persona:
@@ -401,6 +413,9 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       inboundEnabled: true,
       outboundEnabled: true,
       onboardComplete: true,
+      inboundBrief: "Handle inbound callers. Capture the checklist. Negotiate inside the cap.",
+      outboundBrief: "On pickup, say why you called, complete the checklist, stay inside the cap.",
+      pendingCall: null,
       createdAt: now(),
     }),
     logistics: () => {
@@ -425,6 +440,8 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       brandColor: "#4a3728",
       languages: { primary: "english", secondary: ["spanish"] },
       webrtcCode: `local-${slug}`,
+      inboundPhone: "",
+      outboundFromNumber: "",
       openingScript:
         "Thanks for calling. This is Grace. I can help with an order, a return, or a damaged shipment.",
       persona:
@@ -483,6 +500,9 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       inboundEnabled: true,
       outboundEnabled: true,
       onboardComplete: true,
+      inboundBrief: "Handle inbound callers. Capture the checklist. Negotiate inside the cap.",
+      outboundBrief: "On pickup, say why you called, complete the checklist, stay inside the cap.",
+      pendingCall: null,
       createdAt: now(),
     }),
     custom: (): Tenant => ({
@@ -497,6 +517,8 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       brandColor: "#2c2a26",
       languages: { primary: "english", secondary: [] },
       webrtcCode: `local-${slug}`,
+      inboundPhone: "",
+      outboundFromNumber: "",
       openingScript: `This is ${name}. How can I help you today?`,
       persona: `You represent ${name}. Stay inside the playbook. Do not invent policy.`,
       purpose: "Inbound questions and outbound follow-ups for this business.",
@@ -530,10 +552,13 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       knowledge: [],
       negotiationMoves: ["If it is not in the docs, say so and escalate."],
       leads: [],
-      inboundEnabled: true,
-      outboundEnabled: true,
-      onboardComplete: false,
-      createdAt: now(),
+    inboundEnabled: true,
+    outboundEnabled: true,
+    onboardComplete: false,
+    inboundBrief: "",
+    outboundBrief: "",
+    pendingCall: null,
+    createdAt: now(),
     }),
   };
 

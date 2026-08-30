@@ -74,6 +74,8 @@ export type Tenant = {
     secondary: Array<"english" | "spanish" | "french" | "german" | "italian">;
   };
   webrtcCode: string;
+  inboundPhone: string;
+  outboundFromNumber: string;
   openingScript: string;
   persona: string;
   purpose: string;
@@ -90,6 +92,9 @@ export type Tenant = {
   inboundEnabled: boolean;
   outboundEnabled: boolean;
   onboardComplete: boolean;
+  inboundBrief: string;
+  outboundBrief: string;
+  pendingCall: { direction: "inbound" | "outbound"; leadId?: string } | null;
   createdAt: string;
 };
 
