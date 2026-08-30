@@ -1,0 +1,155 @@
+src/lib/schema.sql
+  s_073f4fecb333e8::t_39a867603aa130 1-17
+src/app/api/sessions/start/route.ts
+  s_073f4fecb333e8::t_5b4f69acada74f 7-8,11-18
+  s_073f4fecb333e8::t_64f045127a46ed 2
+docker-compose.yml
+  s_073f4fecb333e8::t_2c3904da54501b 6
+  s_073f4fecb333e8::t_2fd9e01eb7b56a 1-5,7-20
+src/app/api/tenants/route.ts
+  s_073f4fecb333e8::t_e5a899f16d7698 2
+  s_073f4fecb333e8::t_b2e4d4e9ee6d80 7
+src/app/api/auth/me/route.ts
+  s_073f4fecb333e8::t_5c1494c257561f 8
+  s_073f4fecb333e8::t_db67d2e74c2000 3
+src/app/api/auth/signup/route.ts
+  s_073f4fecb333e8::t_b1d67ee9d93470 3
+  s_073f4fecb333e8::t_d67523dbc6a8fc 18
+next.config.ts
+  s_073f4fecb333e8::t_d6a92c7f2ca8d5 5
+src/lib/types.ts
+  s_073f4fecb333e8::t_6ae483c3e29fae 77-78
+  s_073f4fecb333e8::t_c6a70250ee322a 95-97
+src/app/api/tenants/[slug]/dial/route.ts
+  s_073f4fecb333e8::t_60715e00e2c811 1-67
+src/app/api/tenants/[slug]/leads/route.ts
+  s_073f4fecb333e8::t_471ed2202c7dfc 1-32
+expert/main.py
+  s_073f4fecb333e8::t_5ab44f4fb92c65 45,49
+  s_073f4fecb333e8::t_ac7c1dbba6ce2c 661,673-677
+  s_073f4fecb333e8::t_5043a902e0fb0d 609-610
+  s_073f4fecb333e8::t_db982065b5bade 759-760,770,772-793,808-809,817-818,820-824
+  s_073f4fecb333e8::t_f67c2df25d9196 400-410
+  s_073f4fecb333e8::t_86003f6e33cecb 421-425,430-431,434-438,443-453
+  s_073f4fecb333e8::t_d36f68ea8a3c09 662-663
+  s_073f4fecb333e8::t_692b3d99227e12 25
+  s_073f4fecb333e8::t_2154804c0abe86 694-699
+  s_073f4fecb333e8::t_87b8f6f91163fe 706-708
+  s_073f4fecb333e8::t_8e3fc41a43e6e9 483-486
+  s_073f4fecb333e8::t_faab1337310110 241-246,248,276,278-282,284,294-322,344-345,358-363,396-398,414-420,426-429,432-433,441-442,454-466,473,476,479,482,516,518-520,522,543,580-581,586,588,594,599,606-608,611,623,625-639,641-644
+  s_073f4fecb333e8::t_f51efe1573e266 480-481
+  s_073f4fecb333e8::t_e2f90686ed9025 4-16,40-41,46-48,100-158,163-169,172-180,205,210-213,217-226,228,247,249-275,277,323-343,364-390,399,411-413,439-440,467-472,474-475,477-478,487-488,493-494,497-515,517,523-526,529-534,539-542,544-574,612,622,624,640,645-660,721,729-756,761-769,771
+  s_073f4fecb333e8::t_f2008292ee91c9 489-492,495-496
+  s_073f4fecb333e8::t_3de03ba443098d 283,285-293
+  s_073f4fecb333e8::t_704c3b4ebeffd9 187-191
+  s_073f4fecb333e8::t_a23caf3b1a16f7 214-216
+  s_073f4fecb333e8::t_a70a90decca3a1 521
+  s_073f4fecb333e8::t_cab8855ecf1344 678
+  s_073f4fecb333e8::t_987dc1f942ca56 757-758
+src/app/api/sessions/[id]/say/route.ts
+  s_073f4fecb333e8::t_0c5cdd086be29b 12
+  s_073f4fecb333e8::t_7ef29e7e6f0680 2
+src/app/api/expert/health/route.ts
+  s_073f4fecb333e8::t_b4d9c84f6b2278 1-14
+src/app/api/sessions/route.ts
+  s_073f4fecb333e8::t_457c0594c08ed2 2
+  s_073f4fecb333e8::t_fa163399982426 7
+src/instrumentation.ts
+  s_073f4fecb333e8::t_2bf1515b677e4f 1-6
+README.md
+  s_073f4fecb333e8::t_ad689dbbff84fa 12-13
+  s_073f4fecb333e8::t_ad53a5c3a015e6 45-46,52,55,60,64-67,72,74
+src/app/api/ingest/route.ts
+  s_073f4fecb333e8::t_fd47dc9e0f011d 3
+  s_073f4fecb333e8::t_9b0aaf7862b827 2
+  s_073f4fecb333e8::t_77387c89888f83 13
+  s_073f4fecb333e8::t_8104db8e06c5c2 47
+  s_073f4fecb333e8::t_063a626e1ccd8c 66-75
+  s_073f4fecb333e8::t_b0022b407363ef 27-29
+src/app/api/sessions/[id]/route.ts
+  s_073f4fecb333e8::t_fb34d6f950633d 2
+  s_073f4fecb333e8::t_dc412163f586f0 10
+src/app/api/desk/stream/route.ts
+  s_073f4fecb333e8::t_3c0c3b8348d894 2
+  s_073f4fecb333e8::t_13f1447c82db4b 8
+src/lib/templates.ts
+  s_073f4fecb333e8::t_e187e91539703a 555-561
+  s_073f4fecb333e8::t_eaad99afdaac3f 229-230
+  s_073f4fecb333e8::t_9d1cf38b700536 43-44
+  s_073f4fecb333e8::t_67e23a6dbf1a7c 443-444
+  s_073f4fecb333e8::t_d023539fda8c2c 350-351
+  s_073f4fecb333e8::t_f39913e1d3a808 416-418,503-505
+  s_073f4fecb333e8::t_24fae01e781f50 520-521
+  s_073f4fecb333e8::t_46b1f52d702afc 209-211,319-321
+src/app/api/tenants/create/route.ts
+  s_073f4fecb333e8::t_e412ba4dbaae75 16
+  s_073f4fecb333e8::t_21267dec807831 2
+src/lib/db.ts
+  s_073f4fecb333e8::t_4ba64759d7affc 8
+  s_073f4fecb333e8::t_0286eb1a24b3ea 1-7,9-21
+package.json
+  s_073f4fecb333e8::t_12312a998b9ad8 7
+  s_073f4fecb333e8::t_dc362c665a3b2a 19,30
+.env.example
+  s_073f4fecb333e8::t_69972e57c4206e 1
+  s_073f4fecb333e8::t_5e67dc9ec233a7 3-4
+src/lib/onboard-schema.ts
+  s_073f4fecb333e8::t_c1aaf8d4161e2f 1-2,4-7,11-14,18-21,25-28,32-35,37-41,44-47,50-53,56-59,62-65,69-81,89-110,115,118,137-145,148-191,194
+  s_073f4fecb333e8::t_8b23479b262a29 3,8-10,15-17,22-24,29-31,36,42-43,48-49,54-55,60-61,66-68
+  s_073f4fecb333e8::t_b8e833b4cd8525 82-88
+  s_073f4fecb333e8::t_53e4ffb7ea7268 123-136
+  s_073f4fecb333e8::t_eca36565a6b379 192-193
+  s_073f4fecb333e8::t_d980c56984cd02 111-114,116-117,119-122
+  s_073f4fecb333e8::t_51ad25b9c339b7 146-147
+src/lib/onboard.ts
+  s_073f4fecb333e8::t_232f655e6042e8 1,4
+src/app/api/onboard/schema/route.ts
+  s_073f4fecb333e8::t_13aec918ed5ba2 10
+  s_073f4fecb333e8::t_7254e2480672ac 1-9,11-12
+src/app/api/onboard/complete/route.ts
+  s_073f4fecb333e8::t_4dd770ec8a68f9 8-9,12-13
+  s_073f4fecb333e8::t_7843b1b19a7a01 4
+src/lib/auth.ts
+  s_073f4fecb333e8::t_299f64b1aabc9a 25
+  s_073f4fecb333e8::t_adf395804488a2 35-36
+  s_073f4fecb333e8::t_8be1410d34cea0 3
+src/app/api/auth/login/route.ts
+  s_073f4fecb333e8::t_30ec15c618913d 3
+  s_073f4fecb333e8::t_e7001dd37012ee 8
+  s_073f4fecb333e8::t_2ea68929fbf4c0 15
+src/app/api/sessions/[id]/whisper/route.ts
+  s_073f4fecb333e8::t_2729a1885f6d7e 30
+  s_073f4fecb333e8::t_db24e77752a96a 1
+  s_073f4fecb333e8::t_e77231d507483a 14
+src/app/api/tenants/[slug]/route.ts
+  s_073f4fecb333e8::t_abfcaef6a2738c 22
+  s_073f4fecb333e8::t_76784a2ac4f90f 11
+  s_073f4fecb333e8::t_49d706621e4515 2
+src/app/api/sessions/[id]/language/route.ts
+  s_073f4fecb333e8::t_23713fc1493bde 2
+  s_073f4fecb333e8::t_ca6247f03a6b13 11
+src/lib/store.ts
+  s_073f4fecb333e8::t_2b5c30bec3e5e5 1,4,14,47-54,56,58,60-84,88-106,108-113,117-137,154,160-161,178,200-203,208
+  s_073f4fecb333e8::t_01f74c7fe64e54 107
+  s_073f4fecb333e8::t_f85f1736fd6299 42-43
+  s_073f4fecb333e8::t_0b3de41a6941df 39-41
+  s_073f4fecb333e8::t_8d26eaf0a0d7e5 114-116
+package-lock.json
+  s_073f4fecb333e8::t_9eaf56db51b2be 16,27,2302-2313,7559-7647,7799-7837,8712-8720,9694-9702
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "36094ab2fdd6654e6b8f97007a8387c9057b5d41",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
