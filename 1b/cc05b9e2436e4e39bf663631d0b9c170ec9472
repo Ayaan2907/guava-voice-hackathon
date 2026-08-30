@@ -1,0 +1,49 @@
+src/lib/templates.ts
+  s_073f4fecb333e8::t_f39913e1d3a808 416-418,503-505
+  s_073f4fecb333e8::t_24fae01e781f50 520-521
+  s_073f4fecb333e8::t_e187e91539703a 555-561
+  s_073f4fecb333e8::t_67e23a6dbf1a7c 443-444
+  s_073f4fecb333e8::t_d023539fda8c2c 350-351
+  s_073f4fecb333e8::t_9d1cf38b700536 43-44
+  s_073f4fecb333e8::t_eaad99afdaac3f 229-230
+  s_073f4fecb333e8::t_46b1f52d702afc 209-211,319-321
+src/lib/onboard.ts
+  s_073f4fecb333e8::t_232f655e6042e8 1,4
+src/lib/auth.ts
+  s_073f4fecb333e8::t_adf395804488a2 35-36
+  s_073f4fecb333e8::t_8be1410d34cea0 3
+  s_073f4fecb333e8::t_299f64b1aabc9a 25
+src/lib/store.ts
+  s_073f4fecb333e8::t_01f74c7fe64e54 107
+  s_073f4fecb333e8::t_2b5c30bec3e5e5 1,4,14,47-54,56,58,60-84,88-106,108-113,117-137,154,160-161,178,200-203,208
+  s_073f4fecb333e8::t_f85f1736fd6299 42-43
+  s_073f4fecb333e8::t_0b3de41a6941df 39-41
+  s_073f4fecb333e8::t_8d26eaf0a0d7e5 114-116
+src/lib/types.ts
+  s_073f4fecb333e8::t_6ae483c3e29fae 77-78
+  s_073f4fecb333e8::t_c6a70250ee322a 95-97
+src/lib/onboard-schema.ts
+  s_073f4fecb333e8::t_53e4ffb7ea7268 123-136
+  s_073f4fecb333e8::t_b8e833b4cd8525 82-88
+  s_073f4fecb333e8::t_d980c56984cd02 111-114,116-117,119-122
+  s_073f4fecb333e8::t_51ad25b9c339b7 146-147
+  s_073f4fecb333e8::t_8b23479b262a29 3,8-10,15-17,22-24,29-31,36,42-43,48-49,54-55,60-61,66-68
+  s_073f4fecb333e8::t_c1aaf8d4161e2f 1-2,4-7,11-14,18-21,25-28,32-35,37-41,44-47,50-53,56-59,62-65,69-81,89-110,115,118,137-145,148-191,194
+  s_073f4fecb333e8::t_eca36565a6b379 192-193
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "1bcc05b9e2436e4e39bf663631d0b9c170ec9472",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
