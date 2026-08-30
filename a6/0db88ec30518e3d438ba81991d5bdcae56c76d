@@ -1,0 +1,52 @@
+src/app/desks/page.tsx
+  s_073f4fecb333e8::t_65dff6ad3271d0 2,4,11,19-21,24-26,28-29
+  s_073f4fecb333e8::t_6ff5cd92f80878 8-9
+  s_99367ac25c3ace::t_de5297aa0ef597 15-18,23,27,30-33
+src/app/desk/[slug]/page.tsx
+  s_073f4fecb333e8::t_cb8d5a0f1fb9b8 1,6-7,14-15
+  s_073f4fecb333e8::t_7723b6c3d27f3b 13
+  s_073f4fecb333e8::t_128cb5050b07aa 2
+src/components/site-header.tsx
+  s_99367ac25c3ace::t_2cbe1f8fc9d477 6-7,10-12,14-46
+README.md
+  s_073f4fecb333e8::t_ad53a5c3a015e6 45-46,52,55,60,64-67,72,74
+  s_073f4fecb333e8::t_ad689dbbff84fa 12-13
+src/app/globals.css
+  s_99367ac25c3ace::t_2af16c9b10e465 44-45,47-50,54-88,92-124,134-141,145-146,151-164
+src/components/tenants-board.tsx
+  s_073f4fecb333e8::t_ee40a8b5cb19c9 112
+  s_073f4fecb333e8::t_dc5ccebf52c1b7 1-49,51-56,58-59,61-64,66-69,71-75,77-82,84,90-96,104-107,110,113-124,127-128,130-134,136-138,140-145,147-153,155-157,159-161,163-165,167-174,178-180
+  s_99367ac25c3ace::t_06d881a7009a44 50,57,60,65,70,76,83,85-89,97-103,108-109,111,125-126,129,135,139,146,154,158,162,166,175-177
+src/app/layout.tsx
+  s_99367ac25c3ace::t_517d72bda0b31d 2,5,11,17,20
+src/app/page.tsx
+  s_99367ac25c3ace::t_fc74f870ec4912 10-11,14,17,23,26,32,38,43,51-55,63-66,75-80,85-88,93-95,100-102,106-108,116-118,122,125-128,141-144,150-156,160
+  s_073f4fecb333e8::t_be7b7ec9e9c54b 25,28,34
+  s_073f4fecb333e8::t_7961cc49e2928c 29
+src/app/not-found.tsx
+  s_073f4fecb333e8::t_f31f18207c96a9 14
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "a60db88ec30518e3d438ba81991d5bdcae56c76d",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    },
+    "s_99367ac25c3ace": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "ed13401c-e526-4c0b-994a-1be6e87a87b1",
+        "model": "cursor-grok-4.6-medium"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
