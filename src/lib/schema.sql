@@ -1,0 +1,17 @@
+CREATE TABLE IF NOT EXISTS pact_tenants (
+  slug TEXT PRIMARY KEY,
+  data JSONB NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS pact_users (
+  id TEXT PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  org_slug TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS pact_sessions (
+  id TEXT PRIMARY KEY,
+  tenant_slug TEXT NOT NULL,
+  data JSONB NOT NULL
+);
