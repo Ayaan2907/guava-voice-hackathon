@@ -1,0 +1,37 @@
+docker-compose.yml
+  s_073f4fecb333e8::t_2fd9e01eb7b56a 1-5,7-20
+  s_073f4fecb333e8::t_2c3904da54501b 6
+next.config.ts
+  s_073f4fecb333e8::t_d6a92c7f2ca8d5 5
+src/lib/schema.sql
+  s_073f4fecb333e8::t_39a867603aa130 1-17
+package.json
+  s_073f4fecb333e8::t_dc362c665a3b2a 19,30
+  s_073f4fecb333e8::t_12312a998b9ad8 7
+package-lock.json
+  s_073f4fecb333e8::t_9eaf56db51b2be 16,27,2302-2313,7559-7647,7799-7837,8712-8720,9694-9702
+.env.example
+  s_073f4fecb333e8::t_5e67dc9ec233a7 3-4
+  s_073f4fecb333e8::t_69972e57c4206e 1
+src/instrumentation.ts
+  s_073f4fecb333e8::t_2bf1515b677e4f 1-6
+src/lib/db.ts
+  s_073f4fecb333e8::t_4ba64759d7affc 8
+  s_073f4fecb333e8::t_0286eb1a24b3ea 1-7,9-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "fb02196a58f37b6177fd7b46c6c6d1f831795ecd",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
