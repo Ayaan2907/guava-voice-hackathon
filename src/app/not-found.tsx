@@ -11,7 +11,7 @@ export default function NotFound() {
           Tenants are created on signup. Northstar and Harbor Lane ship with the app.
         </p>
         <p className="mt-6">
-          <Link href="/desk/northstar">Open Northstar</Link>
+          <Link href="/app/northstar">Open Northstar dashboard</Link>
           {" · "}
           <Link href="/onboard">Start a desk</Link>
         </p>

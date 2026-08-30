@@ -1,16 +1,16 @@
-import { notFound } from "next/navigation";
-import { DeskClient } from "@/components/desk-client";
-import { getTenant } from "@/lib/store";
+import { redirect } from "next/navigation";
+import { ensureStore, getTenant } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-export default async function DeskPage({
+/** /desk/{slug} was a second console. The signed-in dashboard is /app/{slug}. */
+export default async function DeskAliasPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tenant = getTenant(slug);
-  if (!tenant) notFound();
-  return <DeskClient tenant={tenant} />;
+  await ensureStore();
+  if (!getTenant(slug)) redirect("/desks");
+  redirect(`/app/${slug}`);
 }

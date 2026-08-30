@@ -1,40 +1,36 @@
 import Link from "next/link";
+import { TenantsBoard } from "@/components/tenants-board";
 import { SiteHeader } from "@/components/site-header";
-import { listTenants } from "@/lib/store";
-import { VERTICAL_LABELS } from "@/lib/templates";
+import { ensureStore, listSessions, listTenants } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
-export default function DesksPage() {
+export default async function DesksPage() {
+  await ensureStore();
   const tenants = listTenants();
+  const sessions = listSessions();
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-3xl px-4 py-12">
-        <h1 className="font-serif text-4xl">Every tenant is a desk</h1>
-        <p className="mt-3 text-muted-foreground">
-          Same binary. Different JSON. Open a console or the public line.
+      <main className="mx-auto max-w-5xl px-6 py-14 sm:px-10">
+        <p className="text-[11px] tracking-[0.22em] text-brass uppercase">Platform</p>
+        <h1 className="font-serif mt-3 text-4xl font-medium tracking-tight sm:text-5xl">All tenants</h1>
+        <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+          This is the monitor for every desk on Pact. Each row is a different Guava Agent:
+          persona, greeting, language, checklist, and DocumentQA. Click a tenant for its
+          public line, live calls, and what we inject on the call.
         </p>
-        <ul className="mt-8 space-y-3">
-          {tenants.map((t) => (
-            <li key={t.slug} className="rounded-xl border border-border bg-card p-4">
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="font-serif text-2xl">{t.name}</h2>
-                <span className="text-xs text-muted-foreground">
-                  {VERTICAL_LABELS[t.vertical]}
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">{t.tagline}</p>
-              <p className="mt-2 font-mono text-xs">{t.webrtcCode}</p>
-              <div className="mt-3 flex gap-4 text-sm">
-                <Link href={`/desk/${t.slug}`}>Desk</Link>
-                <Link href={`/line/${t.slug}`}>Public line</Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-8">
-          <Link href="/onboard">Start another desk →</Link>
+        <p className="mt-3 text-sm text-muted-foreground">
+          Operator home for one business is <code className="font-mono text-xs">/app/{"{slug}"}</code>.
+          Public inbound is <code className="font-mono text-xs">/line/{"{slug}"}</code>.
+        </p>
+        <div className="mt-10">
+          <TenantsBoard tenants={tenants} sessions={sessions} />
+        </div>
+        <p className="mt-10">
+          <Link href="/signup" className="text-sm no-underline transition-colors duration-200 hover:text-brass">
+            Sign up another business →
+          </Link>
         </p>
       </main>
     </div>

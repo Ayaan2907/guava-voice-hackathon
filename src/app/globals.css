@@ -41,107 +41,124 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-xl: calc(var(--radius) * 1.25);
+  --radius-2xl: calc(var(--radius) * 1.5);
+  --radius-3xl: calc(var(--radius) * 1.75);
+  --radius-4xl: calc(var(--radius) * 2);
 }
 
 :root {
-  --background: #f3efe6;
-  --foreground: #1c1916;
-  --card: #faf7f0;
-  --card-foreground: #1c1916;
-  --popover: #faf7f0;
-  --popover-foreground: #1c1916;
-  --primary: #1c1916;
-  --primary-foreground: #f3efe6;
-  --secondary: #e7e1d4;
-  --secondary-foreground: #1c1916;
-  --muted: #e7e1d4;
-  --muted-foreground: #6b6458;
-  --accent: #e7e1d4;
-  --accent-foreground: #1c1916;
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: #d4cbb8;
-  --input: #d4cbb8;
-  --ring: #8a6a3b;
-  --live: #1f7a4d;
-  --brass: #8a6a3b;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Cool-warm paper + ink. Copper used only as --brass. */
+  --background: #f4f1ea;
+  --foreground: #161311;
+  --card: #faf8f3;
+  --card-foreground: #161311;
+  --popover: #faf8f3;
+  --popover-foreground: #161311;
+  --primary: #161311;
+  --primary-foreground: #f4f1ea;
+  --secondary: #ebe7de;
+  --secondary-foreground: #161311;
+  --muted: #ebe7de;
+  --muted-foreground: #4a453c;
+  --accent: #ebe7de;
+  --accent-foreground: #161311;
+  --destructive: #9b2c2c;
+  --border: color-mix(in srgb, #161311 16%, transparent);
+  --input: color-mix(in srgb, #161311 18%, transparent);
+  --ring: #8c3b2e;
+  --live: #1f5c40;
+  --brass: #8c3b2e;
+  --chart-1: #8c3b2e;
+  --chart-2: #4a453c;
+  --chart-3: #1f5c40;
+  --chart-4: #161311;
+  --chart-5: #c4b8a4;
+  --radius: 0.75rem;
+  --sidebar: #faf8f3;
+  --sidebar-foreground: #161311;
+  --sidebar-primary: #161311;
+  --sidebar-primary-foreground: #f4f1ea;
+  --sidebar-accent: #ebe7de;
+  --sidebar-accent-foreground: #161311;
+  --sidebar-border: color-mix(in srgb, #161311 16%, transparent);
+  --sidebar-ring: #8c3b2e;
 }
 
 .dark {
-  --background: #0e0f12;
-  --foreground: #ece8e0;
-  --card: #16181d;
-  --card-foreground: #ece8e0;
-  --popover: #16181d;
-  --popover-foreground: #ece8e0;
-  --primary: #ece8e0;
-  --primary-foreground: #0e0f12;
-  --secondary: #22252c;
-  --secondary-foreground: #ece8e0;
-  --muted: #22252c;
-  --muted-foreground: #9a9488;
-  --accent: #22252c;
-  --accent-foreground: #ece8e0;
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: #2c3038;
-  --input: #2c3038;
-  --ring: #4ecb8d;
-  --live: #4ecb8d;
-  --brass: #c4a574;
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #12110f;
+  --foreground: #f0ece4;
+  --card: #1a1815;
+  --card-foreground: #f0ece4;
+  --popover: #1a1815;
+  --popover-foreground: #f0ece4;
+  --primary: #f0ece4;
+  --primary-foreground: #12110f;
+  --secondary: #24211c;
+  --secondary-foreground: #f0ece4;
+  --muted: #24211c;
+  --muted-foreground: #b4ada0;
+  --accent: #24211c;
+  --accent-foreground: #f0ece4;
+  --destructive: #e07070;
+  --border: color-mix(in srgb, #f0ece4 14%, transparent);
+  --input: color-mix(in srgb, #f0ece4 16%, transparent);
+  --ring: #c45a48;
+  --live: #6aab88;
+  --brass: #c45a48;
+  --chart-1: #c45a48;
+  --chart-2: #b4ada0;
+  --chart-3: #6aab88;
+  --chart-4: #f0ece4;
+  --chart-5: #3a3530;
+  --sidebar: #1a1815;
+  --sidebar-foreground: #f0ece4;
+  --sidebar-primary: #f0ece4;
+  --sidebar-primary-foreground: #12110f;
+  --sidebar-accent: #24211c;
+  --sidebar-accent-foreground: #f0ece4;
+  --sidebar-border: color-mix(in srgb, #f0ece4 14%, transparent);
+  --sidebar-ring: #c45a48;
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-foreground;
-  }
   html {
     @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01" on, "kern" on;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--brass) 22%, transparent);
+    color: var(--foreground);
   }
 }
 
 .font-serif {
-  font-family: var(--font-serif), ui-serif, Georgia, serif;
+  font-family: var(--font-serif), "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  font-optical-sizing: auto;
 }
 
 .desk-grid {
   background-image:
-    linear-gradient(to right, color-mix(in srgb, var(--foreground) 4%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in srgb, var(--foreground) 4%, transparent) 1px, transparent 1px);
-  background-size: 32px 32px;
+    linear-gradient(to right, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--foreground) 5%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

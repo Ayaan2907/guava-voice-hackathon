@@ -9,7 +9,8 @@ The negotiation desk any business can turn on.
 Pact is a **multi-tenant** inbound + outbound voice desk. A company signs up, we load their playbook, documents, and authority, and they get:
 
 - a **public web line** (`/line/[slug]`) for anyone who calls that business from the site
-- an **operator console** (`/desk/[slug]`) that watches the live call, fills structured fields, and **whispers** instructions without taking the audio
+- an **operator dashboard** (`/app/[slug]`) that watches the live call, fills structured fields, and **whispers** without taking the audio
+- a **platform monitor** (`/desks`) for every tenant's line, calls, and Guava playbook
 - an **outbound queue** for renewals, lapses, follow-ups
 
 Insurance (Northstar Mutual) is the live demo vertical. Logistics (Harbor Lane Freight) is a second tenant in the same app. Healthcare and e-commerce are templates on signup.
@@ -41,36 +42,36 @@ Origin CLI docs: https://cursor.com/docs/origin/cli
 ## Run locally
 
 ```bash
+cp .env.example .env   # then set GUAVA_API_KEY
+docker compose up -d
 npm install
 npm run dev
 # → http://127.0.0.1:43147
 ```
 
-In another terminal, after you have a Guava key and WebRTC codes:
+In another terminal:
 
 ```bash
-export GUAVA_API_KEY=...
-export PACT_URL=http://127.0.0.1:43147
+source .venv/bin/activate
 pip install -r expert/requirements.txt
 python expert/main.py
 ```
 
-Paste `grtc-…` codes into each tenant's **Line** tab. Until then, the desk runs a built-in simulator so you can demo whisper, fields, bilingual gloss, and outbound without a key.
+The Expert mints a `grtc-` code per tenant and listens. Open `/line/[slug]` and use the Guava orb. There is no simulated transcript.
 
 ## Demo path
 
-1. Open the homepage, then **Open Northstar**.
-2. In another window, open **public line** and talk (or click Simulate inbound on the desk).
-3. When the caller asks for a manager, type a whisper — the agent stays on the call.
-4. Place an outbound call to Maria (renewal) or Priya (Spanish).
-5. **Start a desk** and sign up a clinic. Same product, new tenant.
+1. Homepage → Open Northstar desk, or sign up a business and save the playbook form.
+2. Open **public line** (or the CRM orb) and talk.
+3. When the caller asks for a manager, whisper from the desk. Agent stays on the call.
+4. Switch tenant to Harbor Lane. Same product, different row in Postgres.
 
 ## Stack
 
 - Next.js 15 (App Router) + TypeScript + Tailwind + shadcn/ui — control plane and UI
-- In-memory tenant/session store (JSON on disk for tenants)
+- PostgreSQL (Docker) for tenants, users, and call logs
 - Python Expert (`guava-sdk`) — Dialog System steering via documented APIs only
-- Guava WebRTC widget for real inbound audio when a `grtc-` code is set
+- Guava WebRTC widget for live inbound audio
 
 ## Guava mapping
 

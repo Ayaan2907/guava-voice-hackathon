@@ -3,37 +3,47 @@ import Link from "next/link";
 export function SiteHeader({ dark }: { dark?: boolean }) {
   return (
     <header
-      className={`flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-6 ${
-        dark ? "border-border bg-background/80 backdrop-blur" : "border-border bg-background/90 backdrop-blur"
+      className={`border-b px-6 py-5 sm:px-10 ${
+        dark ? "border-border bg-background" : "border-border bg-background"
       }`}
     >
-      <Link href="/" className="flex items-baseline gap-2 no-underline">
-        <span className="font-serif text-xl tracking-tight">Pact</span>
-        <span className="hidden text-xs text-muted-foreground sm:inline">negotiation desk</span>
-      </Link>
-      <nav className="flex items-center gap-3 text-sm">
-        <Link href="/desks" className="text-muted-foreground hover:text-foreground">
-          Desks
+      <div className="mx-auto flex max-w-5xl items-baseline justify-between gap-8">
+        <Link href="/" className="flex items-baseline gap-3 no-underline">
+          <span className="font-serif text-[1.35rem] leading-none tracking-tight">Pact</span>
         </Link>
-        <Link href="/brief" className="text-muted-foreground hover:text-foreground">
-          Locked brief
-        </Link>
-        <Link href="/platform" className="text-muted-foreground hover:text-foreground">
-          How it works
-        </Link>
-        <Link href="/login" className="text-muted-foreground hover:text-foreground">
-          Sign in
-        </Link>
-        <Link href="/signup" className="text-muted-foreground hover:text-foreground">
-          Sign up
-        </Link>
-        <Link
-          href="/login"
-          className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground no-underline hover:opacity-90"
-        >
-          Open desk
-        </Link>
-      </nav>
+        <nav className="flex flex-wrap items-center justify-end gap-x-5 gap-y-2 text-[13px] tracking-wide">
+          <Link
+            href="/desks"
+            className="text-muted-foreground no-underline transition-colors duration-200 hover:text-foreground"
+          >
+            Tenants
+          </Link>
+          <Link
+            href="/platform"
+            className="hidden text-muted-foreground no-underline transition-colors duration-200 hover:text-foreground sm:inline"
+          >
+            How it works
+          </Link>
+          <Link
+            href="/brief"
+            className="hidden text-muted-foreground no-underline transition-colors duration-200 hover:text-foreground md:inline"
+          >
+            Brief
+          </Link>
+          <Link
+            href="/login"
+            className="text-muted-foreground no-underline transition-colors duration-200 hover:text-foreground"
+          >
+            Sign in
+          </Link>
+          <Link
+            href="/signup"
+            className="text-foreground no-underline transition-opacity duration-200 hover:opacity-70"
+          >
+            Sign up
+          </Link>
+        </nav>
+      </div>
     </header>
   );
 }
