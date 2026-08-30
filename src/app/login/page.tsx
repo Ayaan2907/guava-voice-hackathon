@@ -33,21 +33,22 @@ export default function LoginPage() {
       router.push("/onboard");
       return;
     }
-    router.push(`/app/${data.slug}`);
+    const next = new URLSearchParams(window.location.search).get("next");
+    router.push(next?.startsWith("/app/") ? next : `/app/${data.slug}`);
   }
 
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-md px-4 py-12">
-        <p className="text-xs tracking-[0.16em] text-brass uppercase">Your org only</p>
-        <h1 className="font-serif mt-2 text-4xl">Sign in</h1>
-        <p className="mt-3 text-sm text-muted-foreground">
+      <main className="mx-auto max-w-md px-6 py-16 sm:px-10">
+        <p className="text-[11px] tracking-[0.22em] text-brass uppercase">Your org only</p>
+        <h1 className="font-serif mt-3 text-4xl font-medium tracking-tight">Sign in</h1>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           Demo desk: <span className="font-mono text-xs">northstar@pact.local</span> /{" "}
           <span className="font-mono text-xs">demo</span>. Harbor:{" "}
           <span className="font-mono text-xs">harbor@pact.local</span>.
         </p>
-        <form onSubmit={submit} className="mt-8 space-y-4">
+        <form onSubmit={submit} className="mt-10 space-y-5">
           <div className="space-y-2">
             <Label htmlFor="email">Work email</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
@@ -63,13 +64,13 @@ export default function LoginPage() {
             />
           </div>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <Button type="submit" disabled={pending} className="w-full">
+          <Button type="submit" disabled={pending} className="h-10 w-full rounded-xl">
             {pending ? "Signing in…" : "Open desk"}
           </Button>
         </form>
-        <p className="mt-6 text-sm text-muted-foreground">
+        <p className="mt-8 text-sm text-muted-foreground">
           New business?{" "}
-          <a href="/signup" className="text-foreground underline-offset-4 hover:underline">
+          <a href="/signup" className="text-foreground underline-offset-4 transition-colors hover:text-brass hover:underline">
             Sign up
           </a>
         </p>

@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { CrmClient } from "@/components/crm-client";
 import { currentOrg } from "@/lib/auth";
-import { getTenant } from "@/lib/store";
+import { ensureStore, getTenant } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
@@ -11,6 +11,7 @@ export default async function CrmPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  await ensureStore();
   const org = await currentOrg();
   if (!org) redirect("/login");
   if (org.slug !== slug) redirect(`/app/${org.slug}`);

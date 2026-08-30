@@ -42,14 +42,14 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-xl px-4 py-12">
-        <p className="text-xs tracking-[0.16em] text-brass uppercase">One org per login</p>
-        <h1 className="font-serif mt-2 text-4xl">Sign up a business</h1>
-        <p className="mt-3 text-muted-foreground">
-          After this you talk to Pact once. That call writes the playbook. Then you land on your CRM —
-          dialpad, call log, inbound, web outbound. No pasted WebRTC codes.
+      <main className="mx-auto max-w-xl px-6 py-16 sm:px-10">
+        <p className="text-[11px] tracking-[0.22em] text-brass uppercase">One org per login</p>
+        <h1 className="font-serif mt-3 text-4xl font-medium tracking-tight">Sign up a business</h1>
+        <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+          After this, Pact interviews you on a Guava line. That call writes inbound, outbound, and
+          authority into your playbook. Then the same orb handles live calls.
         </p>
-        <form onSubmit={submit} className="mt-8 space-y-6">
+        <form onSubmit={submit} className="mt-10 space-y-7">
           <div className="space-y-2">
             <Label htmlFor="name">Business name</Label>
             <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Redwood Health Group" />
@@ -70,12 +70,14 @@ export default function SignupPage() {
           </div>
           <fieldset className="space-y-3">
             <legend className="text-sm font-medium">Starting template</legend>
-            <div className="grid gap-2">
+            <div className="divide-y divide-border border-y border-border">
               {CHOICES.map((v) => (
                 <label
                   key={v}
-                  className={`cursor-pointer rounded-lg border p-3 text-sm ${
-                    vertical === v ? "border-foreground bg-card" : "border-border"
+                  className={`block cursor-pointer border-l-2 py-3.5 pl-3 text-sm transition-colors duration-200 ${
+                    vertical === v
+                      ? "border-brass text-foreground"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <input
@@ -85,15 +87,15 @@ export default function SignupPage() {
                     checked={vertical === v}
                     onChange={() => setVertical(v)}
                   />
-                  <span className="font-medium">{VERTICAL_LABELS[v]}</span>
+                  <span className="font-medium text-foreground">{VERTICAL_LABELS[v]}</span>
                   <span className="mt-1 block text-muted-foreground">{VERTICAL_BLURBS[v]}</span>
                 </label>
               ))}
             </div>
           </fieldset>
           {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <Button type="submit" disabled={pending} className="w-full">
-            {pending ? "Creating org…" : "Continue to onboarding call"}
+          <Button type="submit" disabled={pending} className="h-10 w-full rounded-xl">
+            {pending ? "Creating org…" : "Continue to voice onboarding"}
           </Button>
         </form>
       </main>

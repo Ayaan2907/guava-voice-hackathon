@@ -30,6 +30,8 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [whisper, setWhisper] = useState(() => defaultWhisper(initial, null));
   const [webrtc, setWebrtc] = useState(initial.webrtcCode);
+  const [inboundPhone, setInboundPhone] = useState(initial.inboundPhone ?? "");
+  const [outboundFrom, setOutboundFrom] = useState(initial.outboundFromNumber ?? "");
   const [savingCode, setSavingCode] = useState(false);
 
   const active = useMemo(
@@ -55,30 +57,6 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
     return () => es.close();
   }, [tenant.slug]);
 
-  async function startInbound() {
-    const res = await fetch("/api/sessions/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantSlug: tenant.slug, direction: "inbound" }),
-    });
-    const data = await res.json();
-    if (data.session) setActiveId(data.session.id);
-  }
-
-  async function startOutbound(leadId: string) {
-    const res = await fetch("/api/sessions/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tenantSlug: tenant.slug,
-        direction: "outbound",
-        leadId,
-      }),
-    });
-    const data = await res.json();
-    if (data.session) setActiveId(data.session.id);
-  }
-
   async function sendWhisper() {
     if (!active || !whisper.trim()) return;
     await fetch(`/api/sessions/${active.id}/whisper`, {
@@ -93,7 +71,11 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
     const res = await fetch(`/api/tenants/${tenant.slug}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ webrtcCode: webrtc.trim() }),
+      body: JSON.stringify({
+        webrtcCode: webrtc.trim(),
+        inboundPhone: inboundPhone.trim(),
+        outboundFromNumber: outboundFrom.trim() || inboundPhone.trim(),
+      }),
     });
     const data = await res.json();
     setSavingCode(false);
@@ -139,9 +121,6 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
           >
             Open public line
           </Link>
-          <Button size="sm" onClick={startInbound}>
-            {live.some((s) => s.direction === "inbound") ? "Join inbound" : "Simulate inbound"}
-          </Button>
         </div>
       </header>
 
@@ -153,8 +132,8 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
           <div className="p-2">
             {sessions.length === 0 ? (
               <p className="px-2 py-6 text-sm text-muted-foreground">
-                No calls yet. Simulate inbound, or open the public line in another
-                window and start a conversation.
+                No calls yet. Open the public line and speak on the Guava orb.
+                This desk fills from live ingest.
               </p>
             ) : (
               sessions.map((s) => (
@@ -335,8 +314,8 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
             </TabsContent>
             <TabsContent value="outbound" className="p-4">
               <p className="mb-3 text-xs text-muted-foreground">
-                Tonight this places a WebRTC stand-in. After approval:{" "}
-                <code>reach_person</code> then the same task.
+                Outbound is simulated on the CRM orb — no Twilio. Arm a lead, click the widget, play the
+                customer. The agent runs <code>reach_person</code>.
               </p>
               <ul className="space-y-3">
                 {tenant.leads.map((lead) => (
@@ -346,9 +325,9 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
                         <div className="text-sm font-medium">{lead.name}</div>
                         <div className="font-mono text-xs text-muted-foreground">{lead.phone}</div>
                       </div>
-                      <Button size="sm" onClick={() => startOutbound(lead.id)}>
-                        Place call
-                      </Button>
+                      <Link href={`/app/${tenant.slug}`}>
+                        <Button size="sm">Open CRM orb</Button>
+                      </Link>
                     </div>
                     <p className="mt-2 text-xs">{lead.reason}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{lead.context}</p>
@@ -364,17 +343,31 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
             </TabsContent>
             <TabsContent value="line" className="space-y-3 p-4 text-sm">
               <p className="text-xs text-muted-foreground">
-                Paste a real <code>grtc-</code> code from the Guava dashboard or{" "}
-                <code>Client.create_webrtc_agent()</code>. Until then the public line
-                runs the Pact simulator so you can still demo the desk.
+                Paste the phone number Guava issued on the dashboard. Expert calls{" "}
+                <code>listen_phone</code> on it. WebRTC stays as the in-browser line.
               </p>
+              <label className="block text-xs text-muted-foreground">Inbound number (E.164)</label>
+              <Input
+                value={inboundPhone}
+                onChange={(e) => setInboundPhone(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="+15551234567"
+              />
+              <label className="block text-xs text-muted-foreground">Outbound caller ID (optional)</label>
+              <Input
+                value={outboundFrom}
+                onChange={(e) => setOutboundFrom(e.target.value)}
+                className="font-mono text-xs"
+                placeholder="Same as inbound if blank"
+              />
+              <label className="block text-xs text-muted-foreground">WebRTC code</label>
               <Input
                 value={webrtc}
                 onChange={(e) => setWebrtc(e.target.value)}
                 className="font-mono text-xs"
               />
               <Button size="sm" onClick={saveCode} disabled={savingCode}>
-                {savingCode ? "Saving…" : "Save inbound code"}
+                {savingCode ? "Saving…" : "Save line"}
               </Button>
               <p className="text-xs text-muted-foreground">
                 Widget:{" "}

@@ -1,29 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { GuavaWidget } from "@/components/guava-widget";
 import type { Session, Tenant } from "@/lib/types";
 
-export function LineClient({ tenant }: { tenant: Tenant }) {
+export function LineClient({ tenant: initial }: { tenant: Tenant }) {
+  const [tenant, setTenant] = useState(initial);
   const [session, setSession] = useState<Session | null>(null);
-  const [say, setSay] = useState("");
-  const live = tenant.webrtcCode.startsWith("grtc-");
-  const mounted = useRef(false);
 
   useEffect(() => {
-    if (!live || mounted.current) return;
-    mounted.current = true;
-    const script = document.createElement("script");
-    script.src = "https://app.goguava.ai/static/build/webrtc-widgets/guava-widget.js";
-    script.setAttribute("webrtc-code", tenant.webrtcCode);
-    script.setAttribute("gw-name", tenant.name);
-    script.setAttribute("gw-color", tenant.brandColor);
-    script.setAttribute("enable-chat", "");
-    document.body.appendChild(script);
-    // Do not remove on unmount. Guava's widget has no resume; remounting kills WebRTC.
-  }, [live, tenant.brandColor, tenant.name, tenant.webrtcCode]);
+    void fetch(`/api/tenants/${tenant.slug}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ pendingCall: { direction: "inbound" } }),
+    }).then(() => undefined);
+
+    const tick = () => {
+      void fetch(`/api/tenants/${tenant.slug}`)
+        .then((r) => r.json())
+        .then((data) => {
+          if (data.tenant) setTenant(data.tenant);
+        });
+    };
+    tick();
+    const id = setInterval(tick, 2000);
+    return () => clearInterval(id);
+  }, [tenant.slug]);
 
   useEffect(() => {
     const es = new EventSource(`/api/desk/stream?tenant=${tenant.slug}`);
@@ -38,97 +41,46 @@ export function LineClient({ tenant }: { tenant: Tenant }) {
     return () => es.close();
   }, [tenant.slug]);
 
-  async function start() {
-    const res = await fetch("/api/sessions/start", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ tenantSlug: tenant.slug, direction: "inbound" }),
-    });
-    const data = await res.json();
-    if (data.session) setSession(data.session);
-  }
-
-  async function send() {
-    if (!session || !say.trim()) return;
-    await fetch(`/api/sessions/${session.id}/say`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text: say.trim(), role: "caller" }),
-    });
-    setSay("");
-  }
-
   return (
-    <div className="min-h-screen bg-[#f3efe6] text-[#1c1916]">
-      <header className="flex items-center justify-between border-b border-[#d4cbb8] px-4 py-3">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="flex items-end justify-between gap-6 border-b px-6 py-6 sm:px-10">
         <div>
-          <div className="text-xs tracking-[0.16em] uppercase text-[#8a6a3b]">Public line</div>
-          <h1 className="font-serif text-2xl">{tenant.name}</h1>
-          <p className="text-sm text-[#6b6458]">{tenant.tagline}</p>
+          <div className="text-[11px] tracking-[0.22em] text-brass uppercase">Public line</div>
+          <h1 className="font-serif mt-1 text-3xl font-medium tracking-tight">{tenant.name}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{tenant.tagline}</p>
+          {tenant.inboundPhone ? (
+            <p className="mt-2 font-mono text-xs text-brass">Call {tenant.inboundPhone}</p>
+          ) : null}
         </div>
-        <Link href={`/desk/${tenant.slug}`} className="text-sm">
-          Operator desk →
+        <Link href={`/app/${tenant.slug}`} className="text-sm no-underline transition-colors hover:text-brass">
+          Dashboard →
         </Link>
       </header>
 
-      <main className="mx-auto grid max-w-4xl gap-6 px-4 py-8 lg:grid-cols-[1fr_280px]">
-        <section className="rounded-xl border border-[#d4cbb8] bg-[#faf7f0] p-5">
-          {live ? (
-            <p className="mb-4 text-sm text-[#6b6458]">
-              Live Guava widget is mounted for <span className="font-mono">{tenant.webrtcCode}</span>.
-              Use the orb. Do not navigate away — the widget does not resume.
+      <main className="mx-auto grid max-w-4xl gap-12 px-6 py-12 lg:grid-cols-[1fr_240px] sm:px-10">
+        <section>
+          <GuavaWidget webrtcCode={tenant.webrtcCode} name={tenant.name} color={tenant.brandColor} />
+          {session ? (
+            <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+              Live session {session.status} · {session.callerName}. Transcript is on the operator desk.
             </p>
           ) : (
-            <>
-              <p className="mb-4 text-sm text-[#6b6458]">
-                This tenant is on a simulated inbound line until a <span className="font-mono">grtc-</span>{" "}
-                code is pasted in the desk. Open the operator desk in another window. Starting
-                here joins the live inbound if the desk already has one — one call, two windows.
-              </p>
-              {!session ? (
-                <Button onClick={start}>Talk to {tenant.agentName}</Button>
-              ) : (
-                <div>
-                  <ol className="mb-4 max-h-[50vh] space-y-3 overflow-y-auto text-sm">
-                    {session.transcript
-                      .filter((l) => l.role !== "system" && l.role !== "operator")
-                      .map((l) => (
-                        <li key={l.id}>
-                          <span className="text-xs uppercase tracking-wide text-[#8a6a3b]">
-                            {l.role === "agent" ? tenant.agentName : "You"}
-                          </span>
-                          <p>{l.text}</p>
-                        </li>
-                      ))}
-                  </ol>
-                  {session.status !== "ended" ? (
-                    <div className="flex gap-2">
-                      <Textarea
-                        value={say}
-                        onChange={(e) => setSay(e.target.value)}
-                        placeholder="Add a line as the caller (optional — the demo also runs itself)"
-                        rows={2}
-                      />
-                      <Button onClick={send}>Say</Button>
-                    </div>
-                  ) : (
-                    <p className="text-sm text-[#6b6458]">Call ended.</p>
-                  )}
-                </div>
-              )}
-            </>
+            <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+              Click the orb and speak as a customer calling in. Transcript and records land on the
+              dashboard at /app/{tenant.slug}.
+            </p>
           )}
         </section>
-        <aside className="text-sm text-[#6b6458]">
-          <h2 className="font-medium text-[#1c1916]">What this line can do</h2>
-          <ul className="mt-2 list-disc space-y-1 pl-4">
+        <aside className="text-sm text-muted-foreground">
+          <h2 className="font-medium text-foreground">What this line can do</h2>
+          <ul className="mt-3 space-y-2 border-t border-border pt-3">
             {tenant.intents.map((i) => (
               <li key={i.id}>{i.label}</li>
             ))}
           </ul>
-          <p className="mt-4 text-xs">
-            Recorded line. {tenant.agentName} represents {tenant.name}. A human may
-            whisper instructions; they are not on the audio.
+          <p className="mt-6 text-xs leading-relaxed">
+            Recorded line. {tenant.agentName} represents {tenant.name}. A human may whisper instructions; they
+            are not on the audio.
           </p>
         </aside>
       </main>
