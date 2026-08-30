@@ -1,4 +1,5 @@
-import { addLine, getSession, getTenant, patchSession } from "./store";
+import { applyOnboardFields } from "./onboard";
+import { addLine, getSession, getTenant, patchSession, upsertTenant } from "./store";
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
@@ -15,7 +16,10 @@ async function say(
   if (!session || session.status === "ended") return false;
   if (session.pendingWhisper && role === "agent") {
     const whisper = session.pendingWhisper;
-    patchSession(sessionId, { pendingWhisper: null });
+    patchSession(sessionId, {
+      pendingWhisper: null,
+      status: session.status === "escalated" ? "live" : session.status,
+    });
     addLine(sessionId, {
       role: "system",
       text: `Operator whisper applied: “${whisper}”`,
@@ -56,6 +60,7 @@ export async function runInboundSimulation(sessionId: string) {
   await say(sessionId, "agent", tenant.openingScript, { delay: 400 });
   await say(sessionId, "caller", "Hi — hail wrecked my roof last Sunday. I need this paid. And don't start with the deductible.");
   setField(sessionId, "loss_type", "hail");
+  setField(sessionId, "loss_date", "2026-08-23");
   await say(
     sessionId,
     "agent",
@@ -146,7 +151,15 @@ async function runHarborInbound(sessionId: string) {
     await sleep(400);
   }
   setField(sessionId, "caller_name", "Soma Import Co.");
-  await say(sessionId, "agent", "One free day applied. Remaining detention is $150. I can also move Friday's appointment to 09:00 without a change fee. Deal?");
+  const after = getSession(sessionId);
+  if (!after || after.status === "ended") return;
+  if (!after.transcript.some((l) => l.role === "system" && l.text.startsWith("Operator whisper"))) {
+    await say(
+      sessionId,
+      "agent",
+      "One free day applied. Remaining detention is $150. I can also move Friday's appointment to 09:00 without a change fee. Deal?",
+    );
+  }
   await say(sessionId, "caller", "Deal. Send the credit.");
   patchSession(sessionId, { status: "ended", endedAt: new Date().toISOString() });
 }
@@ -239,5 +252,48 @@ export async function runOutboundSimulation(sessionId: string) {
   }
   await say(sessionId, "caller", "I'll think about it. Email me the 8% in writing.");
   setField(sessionId, "outcome", "renewal_saved");
+  patchSession(sessionId, { status: "ended", endedAt: new Date().toISOString() });
+}
+
+export async function runOnboardSimulation(sessionId: string) {
+  const session = getSession(sessionId);
+  const tenant = session ? getTenant(session.tenantSlug) : null;
+  if (!session || !tenant) return;
+
+  patchSession(sessionId, { status: "live", callerName: "Founder", subject: "Onboarding intake" });
+  await say(
+    sessionId,
+    "agent",
+    `I'm Pact. I'll set up ${tenant.name} from this call — what you sell, what I may concede, and what I must never do. Nobody transfers you off this line.`,
+    { delay: 400 },
+  );
+  await say(
+    sessionId,
+    "caller",
+    `We're ${tenant.name}. We need inbound questions and outbound follow-ups handled without giving away the store.`,
+  );
+  setField(
+    sessionId,
+    "purpose",
+    `Help callers for ${tenant.name} inside published authority. Capture the ask. Escalate with a whisper, never a transfer.`,
+  );
+  await say(sessionId, "agent", "What's the most you want me to concede without a human typing in my ear?");
+  await say(sessionId, "caller", "Small goodwill only. Never waive the core fee. Never admit liability.");
+  setField(sessionId, "max_concession", "Modest goodwill only — operator whisper for anything larger.");
+  setField(sessionId, "cannot_do", "Waive core fees; Admit liability; Invent policy");
+  await say(sessionId, "agent", "And the first sentence I should say when someone hits your web line?");
+  await say(sessionId, "caller", `This is ${tenant.name}. How can I help you today?`);
+  setField(sessionId, "greeting", `This is ${tenant.name}. How can I help you today?`);
+  await say(
+    sessionId,
+    "agent",
+    "That's enough to stand up your desk. I'll save this as your playbook. You can change inbound, outbound, and whispers from the CRM.",
+  );
+
+  const live = getSession(sessionId);
+  const fresh = getTenant(tenant.slug);
+  if (live && fresh) {
+    upsertTenant(applyOnboardFields(fresh, live.fields));
+  }
   patchSession(sessionId, { status: "ended", endedAt: new Date().toISOString() });
 }

@@ -21,14 +21,17 @@ export function SiteHeader({ dark }: { dark?: boolean }) {
         <Link href="/platform" className="text-muted-foreground hover:text-foreground">
           How it works
         </Link>
-        <Link href="/onboard" className="text-muted-foreground hover:text-foreground">
-          Start a desk
+        <Link href="/login" className="text-muted-foreground hover:text-foreground">
+          Sign in
+        </Link>
+        <Link href="/signup" className="text-muted-foreground hover:text-foreground">
+          Sign up
         </Link>
         <Link
-          href="/desk/northstar"
+          href="/login"
           className="rounded-md bg-primary px-3 py-1.5 text-primary-foreground no-underline hover:opacity-90"
         >
-          Open Northstar
+          Open desk
         </Link>
       </nav>
     </header>

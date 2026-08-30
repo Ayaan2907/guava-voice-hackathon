@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server";
 import { getTenant, newId, upsertTenant } from "@/lib/store";
+import { slugify } from "@/lib/slug";
 import { templateFor } from "@/lib/templates";
 import type { Vertical } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
-function slugify(name: string) {
-  const s = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")
-    .slice(0, 40);
-  return s || "desk";
-}
 
 export async function POST(req: Request) {
   const body = (await req.json()) as {

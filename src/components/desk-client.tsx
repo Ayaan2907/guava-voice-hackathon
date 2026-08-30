@@ -17,11 +17,18 @@ const WHISPER_PRESETS = [
   "Stay in Spanish. Confirm photos tonight. Do not switch back to English unless they ask.",
 ];
 
+function defaultWhisper(tenant: Tenant, session: Session | null) {
+  if (session?.language === "spanish") return WHISPER_PRESETS[3];
+  if (session?.direction === "outbound") return WHISPER_PRESETS[1];
+  if (tenant.vertical === "logistics") return WHISPER_PRESETS[2];
+  return WHISPER_PRESETS[0];
+}
+
 export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
   const [tenant, setTenant] = useState(initial);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [whisper, setWhisper] = useState(WHISPER_PRESETS[0]);
+  const [whisper, setWhisper] = useState(() => defaultWhisper(initial, null));
   const [webrtc, setWebrtc] = useState(initial.webrtcCode);
   const [savingCode, setSavingCode] = useState(false);
 
@@ -93,7 +100,17 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
     if (data.tenant) setTenant(data.tenant);
   }
 
+  const whisperContextKey = `${tenant.slug}:${tenant.vertical}:${active?.id ?? ""}:${active?.direction ?? ""}:${active?.language ?? ""}`;
+  useEffect(() => {
+    setWhisper(defaultWhisper(tenant, active));
+    // Reset only when the operator switches tenant, call, direction, or language.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- whisperContextKey is the gate
+  }, [whisperContextKey]);
+
   const live = sessions.filter((s) => s.status !== "ended");
+  const whisperApplied = Boolean(
+    active?.transcript.some((l) => l.role === "system" && l.text.startsWith("Operator whisper")),
+  );
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
@@ -123,7 +140,7 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
             Open public line
           </Link>
           <Button size="sm" onClick={startInbound}>
-            Simulate inbound
+            {live.some((s) => s.direction === "inbound") ? "Join inbound" : "Simulate inbound"}
           </Button>
         </div>
       </header>
@@ -214,6 +231,11 @@ export function DeskClient({ tenant: initial }: { tenant: Tenant }) {
                 </ol>
               </ScrollArea>
               <div className="border-t border-border p-3">
+                {whisperApplied ? (
+                  <p className="mb-2 text-[11px] text-live">
+                    Agent spoke your instruction. Caller is still on this line — no transfer.
+                  </p>
+                ) : null}
                 <p className="mb-2 text-[11px] tracking-wider text-brass uppercase">
                   Operator whisper → send_instruction · agent stays on the call
                 </p>

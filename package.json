@@ -7,7 +7,7 @@
     "build": "next build --turbopack",
     "start": "next start --hostname 127.0.0.1 --port 43147",
     "lint": "eslint",
-    "expert": "python3 expert/main.py"
+    "expert": ".venv/bin/python expert/main.py"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

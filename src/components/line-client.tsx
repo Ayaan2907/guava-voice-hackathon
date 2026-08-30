@@ -82,8 +82,8 @@ export function LineClient({ tenant }: { tenant: Tenant }) {
             <>
               <p className="mb-4 text-sm text-[#6b6458]">
                 This tenant is on a simulated inbound line until a <span className="font-mono">grtc-</span>{" "}
-                code is pasted in the desk. Open the operator desk in another window, then start
-                here — you&apos;ll see the same call.
+                code is pasted in the desk. Open the operator desk in another window. Starting
+                here joins the live inbound if the desk already has one — one call, two windows.
               </p>
               {!session ? (
                 <Button onClick={start}>Talk to {tenant.agentName}</Button>

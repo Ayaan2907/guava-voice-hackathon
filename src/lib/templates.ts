@@ -94,7 +94,7 @@ export function northstarMutual(): Tenant {
         id: "human_please",
         label: "Ask for a person",
         description: "Escalate to the desk. Do not transfer the audio.",
-        action: "escalate",
+        action: "human_please",
       },
     ],
     fields: [
@@ -201,6 +201,9 @@ Non-pay lapse: we can reinstate within 14 days with payment plus a $25 fee. Afte
         status: "queued",
       },
     ],
+    inboundEnabled: true,
+    outboundEnabled: true,
+    onboardComplete: true,
     createdAt: now(),
   };
 }
@@ -303,6 +306,9 @@ After 14:00 local, same-day in-gate is not offered.`,
         status: "queued",
       },
     ],
+    inboundEnabled: true,
+    outboundEnabled: true,
+    onboardComplete: true,
     createdAt: now(),
   };
 }
@@ -392,6 +398,9 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
         "Trade a morning slot for a waived no-show only if the knowledge doc allows it.",
       ],
       leads: [],
+      inboundEnabled: true,
+      outboundEnabled: true,
+      onboardComplete: true,
       createdAt: now(),
     }),
     logistics: () => {
@@ -471,6 +480,9 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
         "Do not stack 15% credit with a free label unless an operator whispers it.",
       ],
       leads: [],
+      inboundEnabled: true,
+      outboundEnabled: true,
+      onboardComplete: true,
       createdAt: now(),
     }),
     custom: (): Tenant => ({
@@ -518,6 +530,9 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
       knowledge: [],
       negotiationMoves: ["If it is not in the docs, say so and escalate."],
       leads: [],
+      inboundEnabled: true,
+      outboundEnabled: true,
+      onboardComplete: false,
       createdAt: now(),
     }),
   };
