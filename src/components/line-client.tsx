@@ -45,11 +45,13 @@ export function LineClient({ tenant: initial }: { tenant: Tenant }) {
     <div className="min-h-screen bg-background text-foreground">
       <header className="flex items-end justify-between gap-6 border-b px-6 py-6 sm:px-10">
         <div>
-          <div className="text-[11px] tracking-[0.22em] text-brass uppercase">Public line</div>
+          <div className="text-[11px] tracking-[0.22em] text-brass uppercase">
+            {tenant.role === "platform" ? "Pact sales line" : "Public line"}
+          </div>
           <h1 className="font-serif mt-1 text-3xl font-medium tracking-tight">{tenant.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{tenant.tagline}</p>
-          {tenant.inboundPhone ? (
-            <p className="mt-2 font-mono text-xs text-brass">Call {tenant.inboundPhone}</p>
+          {tenant.role === "platform" && tenant.inboundPhone ? (
+            <p className="mt-2 font-mono text-xs text-brass">Call Pact at {tenant.inboundPhone}</p>
           ) : null}
         </div>
         <Link href={`/app/${tenant.slug}`} className="text-sm no-underline transition-colors hover:text-brass">

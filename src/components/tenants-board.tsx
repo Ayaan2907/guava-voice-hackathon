@@ -88,10 +88,10 @@ export function TenantsBoard({
                       {line || `/line/${t.slug}`}
                     </Link>
                   </p>
-                  {t.inboundPhone ? (
-                    <p className="mt-1 font-mono text-xs">PSTN {t.inboundPhone}</p>
+                  {t.role === "platform" && t.inboundPhone ? (
+                    <p className="mt-1 font-mono text-xs">Pact PSTN {t.inboundPhone}</p>
                   ) : (
-                    <p className="mt-1 text-xs text-muted-foreground">No dashboard phone yet — WebRTC only.</p>
+                    <p className="mt-1 text-xs text-muted-foreground">WebRTC inbound — this desk does not own the Pact DID.</p>
                   )}
                   <p className="mt-1 font-mono text-[11px] text-muted-foreground">{t.webrtcCode}</p>
                   <div className="mt-4 flex flex-wrap gap-4 text-sm">

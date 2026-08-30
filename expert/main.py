@@ -4,14 +4,15 @@ Pact Expert — one process, many tenants.
 Guava has no tenant API. This process is the tenancy: one Agent per desk.
 
 Channels:
-  Runner.listen_webrtc(agent, grtc-code)  — in-browser line
-  Runner.listen_phone(agent, +E.164)       — dashboard number they pasted
-  Agent.call_phone(from, to, variables)      — outbound PSTN
+  Runner.listen_webrtc(agent, grtc-code)  — public web line per slug
+  Runner.listen_phone(agent, +E.164)       — GUAVA_AGENT_NUMBER only on the Pact
+                                             platform agent (sales / onboard)
+  Agent.call_phone(from, to, variables)      — outbound PSTN (caller ID may be the DID)
 
 Call shape (documented APIs):
-  inbound  → persona, language, one opening script, set_task (no second intro)
+  Pact DID inbound → sales/onboard (callers are Pact customers, not tenant callers)
+  tenant inbound  → persona, language, one opening script, set_task
   outbound → persona, language, reach_person; on_reach_person sets the job
-             without re-introducing. Do not pair with set_voicemail_action.
   questions → DocumentQA (one namespaced instance per tenant)
   human_please → send_instruction, never transfer()
 """
@@ -38,6 +39,7 @@ PACT_URL = os.environ.get("PACT_URL", "http://127.0.0.1:43147")
 INGEST_SECRET = os.environ.get("PACT_INGEST_SECRET", "dev-secret")
 WHISPER_PORT = int(os.environ.get("EXPERT_PORT", "18766"))
 DEFAULT_FROM = (os.environ.get("GUAVA_AGENT_NUMBER") or "").strip()
+PLATFORM_SLUG = "pact"
 HITRUST_LANGS = {"english", "spanish"}
 
 LIVE_CALLS: dict[str, Any] = {}
@@ -275,6 +277,36 @@ def place_outbound(body: dict[str, Any]) -> dict[str, Any]:
     return {"ok": True, "from": from_number, "to": to_number}
 
 
+def is_platform(tenant: dict[str, Any]) -> bool:
+    return tenant.get("role") == "platform" or tenant.get("slug") == PLATFORM_SLUG
+
+
+def platform_schema() -> dict[str, Any]:
+    try:
+        return pact_get("/api/platform/schema")
+    except Exception:
+        return {
+            "objective": "Qualify the business. Explain Pact. Book a callback or stand up a desk.",
+            "fields": [
+                {"key": "contact_name", "description": "Caller name", "fieldType": "text", "required": False},
+                {"key": "company_name", "description": "Business name", "fieldType": "text", "required": False},
+                {"key": "industry", "description": "Industry", "fieldType": "text", "required": False},
+                {"key": "contact_email", "description": "Email", "fieldType": "text", "required": False},
+                {"key": "callback_phone", "description": "Callback number", "fieldType": "text", "required": False},
+                {"key": "inbound_jobs", "description": "Inbound jobs", "fieldType": "text", "required": False},
+                {"key": "outbound_jobs", "description": "Outbound jobs", "fieldType": "text", "required": False},
+                {"key": "authority_notes", "description": "Caps and refusals", "fieldType": "text", "required": False},
+                {
+                    "key": "next_step",
+                    "description": "What they want next",
+                    "fieldType": "multiple_choice",
+                    "required": False,
+                    "choices": ["stand_up_desk", "book_callback", "questions_only"],
+                },
+            ],
+        }
+
+
 def onboard_schema() -> dict[str, Any]:
     try:
         return pact_get("/api/onboard/schema")
@@ -389,6 +421,40 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
             checklist=items,
         )
 
+    def start_platform_sales(call: Any, current: dict[str, Any]) -> None:
+        schema = platform_schema()
+        apply_persona(call, current)
+        if current.get("openingScript"):
+            call.read_script(current["openingScript"])
+        call.add_info("direction", "inbound")
+        call.add_info("line", "pact_platform")
+        call.set_task(
+            f"{slug}_sales",
+            objective=schema.get("objective")
+            or "Qualify the business. Explain Pact. Book a callback or stand up a desk.",
+            checklist=[
+                "This caller is buying a Pact desk. They are not a tenant's end-customer.",
+                "If they dump several topics at once, fill those fields silently. Confirm once.",
+                "If they say skip, skip remaining fields and complete.",
+                *checklist(Field, schema.get("fields") or current.get("fields") or []),
+            ],
+            completion_criteria=(
+                "Complete when they are done asking, you booked a callback, "
+                "you have a company name to stand up a desk, or they said skip / that's all."
+            ),
+        )
+        pact_ingest(
+            {
+                "tenantSlug": slug,
+                "sessionId": session_key(call),
+                "kind": "sales",
+                "direction": "inbound",
+                "status": "live",
+                "subject": "Pact inbound",
+                "callerName": "Prospect",
+            }
+        )
+
     @agent.on_call_start
     def on_call_start(call: Any) -> None:
         sid = session_key(call)
@@ -411,6 +477,10 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
 
         if pending:
             pact_patch_tenant(slug, {"pendingCall": None})
+
+        if is_platform(current) and not outbound:
+            start_platform_sales(call, current)
+            return
 
         if onboard:
             schema = onboard_schema()
@@ -578,12 +648,19 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
     @agent.on_caller_speech
     def on_caller_speech(call: Any, event: Any) -> None:
         current = live_tenant()
-        specs = (onboard_schema().get("fields") or []) if not current.get("onboardComplete") else (current.get("fields") or [])
+        kind = (
+            "sales"
+            if is_platform(current)
+            else ("onboard" if not current.get("onboardComplete") else "call")
+        )
+        specs = (platform_schema().get("fields") or []) if kind == "sales" else (
+            (onboard_schema().get("fields") or []) if kind == "onboard" else (current.get("fields") or [])
+        )
         pact_ingest(
             {
                 "tenantSlug": slug,
                 "sessionId": session_key(call),
-                "kind": "onboard" if not current.get("onboardComplete") else "call",
+                "kind": kind,
                 "line": {"role": "caller", "text": getattr(event, "utterance", str(event))},
                 "fields": fields_from(call, specs),
             }
@@ -592,11 +669,16 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
     @agent.on_agent_speech
     def on_agent_speech(call: Any, event: Any) -> None:
         current = live_tenant()
+        kind = (
+            "sales"
+            if is_platform(current)
+            else ("onboard" if not current.get("onboardComplete") else "call")
+        )
         pact_ingest(
             {
                 "tenantSlug": slug,
                 "sessionId": session_key(call),
-                "kind": "onboard" if not current.get("onboardComplete") else "call",
+                "kind": kind,
                 "line": {"role": "agent", "text": getattr(event, "utterance", str(event))},
             }
         )
@@ -622,12 +704,19 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
     def finish_task(call: Any, kind: str) -> None:
         current = live_tenant()
         onboard = kind == "onboard"
-        specs = (onboard_schema().get("fields") or []) if onboard else (current.get("fields") or [])
+        sales = kind == "sales"
+        if sales:
+            specs = platform_schema().get("fields") or []
+        elif onboard:
+            specs = onboard_schema().get("fields") or []
+        else:
+            specs = current.get("fields") or []
+        ingest_kind = "sales" if sales else ("onboard" if onboard else "call")
         pact_ingest(
             {
                 "tenantSlug": slug,
                 "sessionId": session_key(call),
-                "kind": "onboard" if onboard else "call",
+                "kind": ingest_kind,
                 "taskComplete": True,
                 "fields": fields_from(call, specs),
                 "line": {
@@ -636,6 +725,13 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
                 },
             }
         )
+        if sales:
+            call.send_instruction(
+                "If you captured a company name, tell them their public line will be /line/ plus a slug from that name. "
+                "If you only booked a callback, confirm the number and hang up. "
+                "If they only had questions, thank them and hang up."
+            )
+            return
         if onboard:
             knowledge_qa(live_tenant(), DocumentQA)
             call.send_instruction(
@@ -645,6 +741,10 @@ def attach_tenant(guava: Any, runner: Any, tenant: dict[str, Any]) -> None:
         elif kind == "outbound":
             lead = lead_for(call, current)
             update_lead_status(slug, (lead or {}).get("id"), "completed")
+
+    @agent.on_task_complete(f"{slug}_sales")
+    def on_sales_complete(call: Any) -> None:
+        finish_task(call, "sales")
 
     @agent.on_task_complete(f"{slug}_onboard")
     def on_onboard_complete(call: Any) -> None:
@@ -735,7 +835,15 @@ def ensure_phone(tenant: dict[str, Any]) -> None:
     runner = RUNTIME.get("runner")
     if agent is None or runner is None:
         return
-    phone = to_e164(tenant.get("inboundPhone") or DEFAULT_FROM)
+    phone: str | None
+    if is_platform(tenant):
+        phone = to_e164(DEFAULT_FROM or tenant.get("inboundPhone") or "")
+    else:
+        own = to_e164(tenant.get("inboundPhone") or "")
+        shared = to_e164(DEFAULT_FROM)
+        if not own or (shared and own == shared):
+            return
+        phone = own
     if not phone:
         return
     already = PHONE_LISTEN.get(slug)

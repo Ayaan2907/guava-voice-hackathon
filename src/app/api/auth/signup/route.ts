@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   }
 
   let slug = slugify(name);
-  if (getTenant(slug)) slug = `${slug}-${newId("x").slice(-4)}`;
+  if (slug === "pact" || getTenant(slug)) slug = `${slug}-${newId("x").slice(-4)}`;
   const vertical: Vertical = body.vertical ?? "custom";
   const tenant = templateFor(vertical, name, slug);
   if (body.city) tenant.city = body.city.trim();

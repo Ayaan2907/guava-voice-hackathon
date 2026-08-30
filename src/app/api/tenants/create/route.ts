@@ -22,6 +22,7 @@ export async function POST(req: Request) {
   let slug = slugify(name);
   if (getTenant(slug)) slug = `${slug}-${newId("x").slice(-4)}`;
   const tenant = templateFor(vertical, name, slug);
+  tenant.role = "customer";
   if (body.city) tenant.city = body.city.trim();
   if (body.webrtcCode?.trim()) tenant.webrtcCode = body.webrtcCode.trim();
   tenant.id = newId("tenant");

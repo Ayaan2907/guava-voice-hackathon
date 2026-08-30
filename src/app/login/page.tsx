@@ -44,9 +44,10 @@ export default function LoginPage() {
         <p className="text-[11px] tracking-[0.22em] text-brass uppercase">Your org only</p>
         <h1 className="font-serif mt-3 text-4xl font-medium tracking-tight">Sign in</h1>
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          Demo desk: <span className="font-mono text-xs">northstar@pact.local</span> /{" "}
+          Demo: <span className="font-mono text-xs">northstar@pact.local</span> /{" "}
           <span className="font-mono text-xs">demo</span>. Harbor:{" "}
-          <span className="font-mono text-xs">harbor@pact.local</span>.
+          <span className="font-mono text-xs">harbor@pact.local</span>. Pact sales desk:{" "}
+          <span className="font-mono text-xs">pact@pact.local</span>.
         </p>
         <form onSubmit={submit} className="mt-10 space-y-5">
           <div className="space-y-2">

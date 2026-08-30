@@ -15,17 +15,17 @@ export default function HomePage() {
               Not a voice agent. A desk any business can turn on.
             </h1>
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground">
-              Pact is the negotiation OS you sell: a company signs up, we load their
-              playbook, documents, and authority, and they get an inbound web line plus
-              an outbound queue. The agent stays on the call. Operators whisper. New
-              tenants are config, not a new codebase.
+              Pact is the platform you sell: a company gets a web line and an operator who
+              whispers without taking the audio. Call{" "}
+              <span className="font-mono text-base text-foreground">+1 (484) 295-1236</span> to
+              reach Pact itself — that number is sales and onboarding, not a tenant desk.
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Link
                 href="/desks"
                 className="rounded-xl bg-primary px-5 py-2.5 text-sm text-primary-foreground no-underline transition-opacity duration-200 hover:opacity-85"
               >
-                All tenants
+                All desks
               </Link>
               <Link
                 href="/login"

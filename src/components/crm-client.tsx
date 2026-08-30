@@ -116,11 +116,24 @@ export function CrmClient({ tenant: initial }: { tenant: Tenant }) {
           <p className="text-[11px] tracking-[0.22em] text-brass uppercase">Dashboard · {tenant.slug}</p>
           <h1 className="font-serif mt-1 text-2xl font-medium tracking-tight">{tenant.name}</h1>
           <p className="mt-1 max-w-xl text-xs leading-relaxed text-muted-foreground">
-            This is the business home. Public inbound is{" "}
-            <Link href={`/line/${tenant.slug}`} className="underline underline-offset-4">
-              /line/{tenant.slug}
-            </Link>
-            . The orb is outbound when a lead is armed.
+            {tenant.role === "platform" ? (
+              <>
+                Inbound on this desk is Pact itself. Callers are businesses buying a voice agent. Public
+                web line{" "}
+                <Link href="/line/pact" className="underline underline-offset-4">
+                  /line/pact
+                </Link>
+                . PSTN is the Guava number on /desks.
+              </>
+            ) : (
+              <>
+                This is the business home. Public inbound is{" "}
+                <Link href={`/line/${tenant.slug}`} className="underline underline-offset-4">
+                  /line/{tenant.slug}
+                </Link>
+                . The orb is outbound when a lead is armed.
+              </>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-4">

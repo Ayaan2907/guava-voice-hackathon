@@ -5,6 +5,6 @@ export { applyOnboardFields, ONBOARD_FIELDS, onboardReady } from "./onboard-sche
 
 export function completeOnboard(slug: string, fields: Record<string, string> = {}) {
   const tenant = getTenant(slug);
-  if (!tenant) return null;
+  if (!tenant || tenant.role === "platform") return tenant ?? null;
   return upsertTenant(applyOnboardFields(tenant, fields));
 }

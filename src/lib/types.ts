@@ -1,3 +1,5 @@
+export type TenantRole = "platform" | "customer";
+
 export type Vertical =
   | "insurance"
   | "healthcare"
@@ -62,6 +64,7 @@ export type Lead = {
 export type Tenant = {
   id: string;
   slug: string;
+  role: TenantRole;
   name: string;
   vertical: Vertical;
   city: string;

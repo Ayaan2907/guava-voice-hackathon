@@ -17,6 +17,6 @@ export default async function CrmPage({
   if (org.slug !== slug) redirect(`/app/${org.slug}`);
   const tenant = getTenant(slug);
   if (!tenant) redirect("/login");
-  if (!tenant.onboardComplete) redirect("/onboard");
+  if (!tenant.onboardComplete && tenant.role !== "platform") redirect("/onboard");
   return <CrmClient tenant={tenant} />;
 }

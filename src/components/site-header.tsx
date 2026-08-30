@@ -16,7 +16,7 @@ export function SiteHeader({ dark }: { dark?: boolean }) {
             href="/desks"
             className="text-muted-foreground no-underline transition-colors duration-200 hover:text-foreground"
           >
-            Tenants
+            Platform
           </Link>
           <Link
             href="/platform"

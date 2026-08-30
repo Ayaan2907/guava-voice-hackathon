@@ -1,3 +1,4 @@
+import { PACT_INBOUND_E164 } from "./platform-schema";
 import type { Tenant, Vertical } from "./types";
 
 function id(prefix: string) {
@@ -27,10 +28,118 @@ export const VERTICAL_BLURBS: Record<Vertical, string> = {
 
 const now = () => new Date().toISOString();
 
+export function pactPlatform(): Tenant {
+  return {
+    id: "tenant_pact",
+    slug: "pact",
+    role: "platform",
+    name: "Pact",
+    vertical: "custom",
+    city: "San Francisco, CA",
+    tagline: "AI voice desks for businesses. Call this number to get one.",
+    agentName: "Pact",
+    voice: "grace",
+    brandColor: "#8c3b2e",
+    languages: { primary: "english", secondary: ["spanish"] },
+    webrtcCode: "local-pact",
+    inboundPhone: PACT_INBOUND_E164,
+    outboundFromNumber: PACT_INBOUND_E164,
+    openingScript:
+      "You've reached Pact. We stand up AI voice desks for businesses — inbound, outbound, and an operator who can whisper without taking the call. Are you looking to turn a desk on, book a callback, or ask how it works?",
+    persona:
+      "You are Pact, the platform that sells AI voice negotiation desks to companies. Callers on this number are inbound customers of Pact, not end-customers of Northstar or Harbor. You qualify the business, explain that each company gets its own web line and operator dashboard, collect enough to stand up a playbook, and book a callback if they are not ready. You never invent pricing. You never handle an insurance claim or a detention dispute as if you were that tenant. If they want a live demo of a tenant desk, send them to the public web line for that company. Stay on this call. Never transfer.",
+    purpose:
+      "Inbound sales and onboarding for Pact. Capture company details, explain the product, schedule a follow-up, or stand up a customer desk from the call.",
+    authority: {
+      maxConcession:
+        "Stand up a demo desk from this call. Book a callback. Do not quote a dollar price. Do not promise a dedicated PSTN number for their tenants tonight.",
+      cannotDo: [
+        "Handle a tenant's end-customer issue as Pact",
+        "Transfer this call to Northstar or Harbor",
+        "Promise a unique phone number per tenant without a purchased DID",
+        "Waive a tenant's published authority",
+      ],
+      notes: "If they want a human Pact operator, stay on the line and wait for a whisper.",
+    },
+    intents: [
+      {
+        id: "qualify",
+        label: "Qualify the business",
+        description: "What they sell, inbound jobs, outbound jobs.",
+        action: "collect",
+      },
+      {
+        id: "explain",
+        label: "Explain Pact",
+        description: "Web line per tenant, operator whisper, no transfer.",
+        action: "answer",
+      },
+      {
+        id: "callback",
+        label: "Book a callback",
+        description: "Capture a number and when to call.",
+        action: "book",
+      },
+      {
+        id: "onboard",
+        label: "Stand up a desk",
+        description: "Create a customer tenant from this conversation.",
+        action: "collect",
+      },
+    ],
+    fields: [
+      { key: "contact_name", fieldType: "text", description: "Caller name", required: false },
+      { key: "company_name", fieldType: "text", description: "Business name", required: false },
+      { key: "industry", fieldType: "text", description: "Industry in their words", required: false },
+      { key: "contact_email", fieldType: "text", description: "Login email", required: false },
+      { key: "callback_phone", fieldType: "text", description: "Callback number", required: false },
+      { key: "inbound_jobs", fieldType: "text", description: "Why their customers would call", required: false },
+      { key: "outbound_jobs", fieldType: "text", description: "Why they would dial out", required: false },
+      { key: "authority_notes", fieldType: "text", description: "Caps and refusals", required: false },
+      {
+        key: "next_step",
+        fieldType: "multiple_choice",
+        description: "What they want next",
+        required: false,
+        choices: ["stand_up_desk", "book_callback", "questions_only"],
+      },
+    ],
+    knowledge: [
+      {
+        id: "pact_product",
+        title: "What Pact sells",
+        body: `Pact is a multi-tenant platform. A business signs up and receives:
+- A public web line at /line/{slug} with a Guava WebRTC widget. That is their inbound for website callers.
+- An operator dashboard at /app/{slug}. The operator sees transcript and fields and whispers via send_instruction. The agent never transfers the audio.
+- An outbound queue. Operators arm a lead; the same tenant agent uses reach_person.
+Pact's own phone number is +1 (484) 295-1236. Anyone who dials it is calling Pact sales, not Northstar Mutual or Harbor Lane Freight.
+Customer tenants do not share this DID. One Guava listen_phone per number. Unique PSTN per tenant requires buying another Guava number.
+Demo tenants: Northstar Mutual (insurance, /line/northstar) and Harbor Lane Freight (logistics, /line/harbor-lane).
+On this call, collect company_name and enough playbook to stand up a desk, or book a callback.`,
+      },
+    ],
+    negotiationMoves: [
+      "If they want to try a tenant, send them to /line/northstar or /line/harbor-lane. Stay on Pact's line for sales.",
+      "If they dump the whole business, extract fields and offer to stand up the desk.",
+      "If they only have questions, answer from the product doc. Do not invent a price.",
+    ],
+    leads: [],
+    inboundEnabled: true,
+    outboundEnabled: true,
+    onboardComplete: true,
+    inboundBrief:
+      "Inbound customers of Pact. Qualify, explain the product, book a callback, or stand up a desk. You are not a tenant's claims or detention agent.",
+    outboundBrief: "If Pact dials a prospect, say you are Pact, state why you called, complete qualification.",
+    pendingCall: null,
+    createdAt: now(),
+  };
+}
+
 export function northstarMutual(): Tenant {
   return {
     id: "tenant_northstar",
     slug: "northstar",
+    role: "customer",
     name: "Northstar Mutual",
     vertical: "insurance",
     city: "Oakland, CA",
@@ -217,6 +326,7 @@ export function harborLane(): Tenant {
   return {
     id: "tenant_harbor",
     slug: "harbor-lane",
+    role: "customer",
     name: "Harbor Lane Freight",
     vertical: "logistics",
     city: "Long Beach, CA",
@@ -338,6 +448,7 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
     healthcare: (): Tenant => ({
       id: id("tenant"),
       slug,
+      role: "customer",
       name,
       vertical: "healthcare",
       city: "",
@@ -431,6 +542,7 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
     ecommerce: (): Tenant => ({
       id: id("tenant"),
       slug,
+      role: "customer",
       name,
       vertical: "ecommerce",
       city: "",
@@ -508,6 +620,7 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
     custom: (): Tenant => ({
       id: id("tenant"),
       slug,
+      role: "customer",
       name,
       vertical: "custom",
       city: "",
@@ -562,9 +675,12 @@ export function templateFor(vertical: Vertical, name: string, slug: string): Ten
     }),
   };
 
-  return base[vertical]();
+  const tenant = base[vertical]();
+  tenant.role = "customer";
+  tenant.inboundPhone = "";
+  return tenant;
 }
 
 export function seedTenants(): Tenant[] {
-  return [northstarMutual(), harborLane()];
+  return [pactPlatform(), northstarMutual(), harborLane()];
 }

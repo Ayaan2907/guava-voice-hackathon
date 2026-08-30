@@ -2,7 +2,8 @@ import { readFileSync } from "fs";
 import path from "path";
 import { publish } from "./bus";
 import { ensureSchema, getPool } from "./db";
-import { seedTenants } from "./templates";
+import { PACT_INBOUND_E164, PACT_PLATFORM_SLUG } from "./platform-schema";
+import { pactPlatform, seedTenants } from "./templates";
 import type { PactUser, Session, StoreShape, Tenant, TranscriptLine } from "./types";
 
 type Memory = {
@@ -27,20 +28,36 @@ function seedUsers(): PactUser[] {
       password: "demo",
       orgSlug: "harbor-lane",
     },
+    {
+      id: "user_pact",
+      email: "pact@pact.local",
+      password: "demo",
+      orgSlug: PACT_PLATFORM_SLUG,
+    },
   ];
 }
 
+function platformDid() {
+  return (process.env.GUAVA_AGENT_NUMBER || PACT_INBOUND_E164).trim();
+}
+
 function ensureTenantFlags(t: Tenant): Tenant {
+  const role = t.role ?? (t.slug === PACT_PLATFORM_SLUG ? "platform" : "customer");
+  const did = platformDid();
+  let inboundPhone = (t.inboundPhone ?? "").trim();
+  if (role === "platform") inboundPhone = inboundPhone || did;
+  else if (did && inboundPhone === did) inboundPhone = "";
   return {
     ...t,
+    role,
     inboundEnabled: t.inboundEnabled ?? true,
     outboundEnabled: t.outboundEnabled ?? true,
     onboardComplete: t.onboardComplete ?? true,
     inboundBrief: t.inboundBrief ?? t.purpose,
     outboundBrief: t.outboundBrief ?? t.purpose,
     pendingCall: t.pendingCall ?? null,
-    inboundPhone: t.inboundPhone ?? "",
-    outboundFromNumber: t.outboundFromNumber ?? t.inboundPhone ?? "",
+    inboundPhone,
+    outboundFromNumber: (t.outboundFromNumber ?? "").trim(),
   };
 }
 
@@ -119,6 +136,19 @@ async function boot() {
       g.__pactMem.users = seedUsers();
       await persistUsers();
     }
+    if (!g.__pactMem.tenants.some((t) => t.slug === PACT_PLATFORM_SLUG)) {
+      g.__pactMem.tenants.unshift(ensureTenantFlags(pactPlatform()));
+    }
+    if (!g.__pactMem.users.some((u) => u.orgSlug === PACT_PLATFORM_SLUG)) {
+      g.__pactMem.users.push({
+        id: "user_pact",
+        email: "pact@pact.local",
+        password: "demo",
+        orgSlug: PACT_PLATFORM_SLUG,
+      });
+      await persistUsers();
+    }
+    await persistTenants();
     return;
   }
 
@@ -139,6 +169,14 @@ export function ensureStore() {
 
 export function listTenants() {
   return mem().tenants;
+}
+
+export function listCustomerTenants() {
+  return mem().tenants.filter((t) => t.role !== "platform");
+}
+
+export function getPlatformTenant() {
+  return mem().tenants.find((t) => t.role === "platform") ?? getTenant(PACT_PLATFORM_SLUG);
 }
 
 export function getTenant(slug: string) {
