@@ -1,0 +1,79 @@
+src/app/api/expert/health/route.ts
+  s_073f4fecb333e8::t_b4d9c84f6b2278 1-14
+src/app/api/onboard/complete/route.ts
+  s_073f4fecb333e8::t_7843b1b19a7a01 4
+  s_073f4fecb333e8::t_4dd770ec8a68f9 8-9,12-13
+src/app/api/sessions/[id]/whisper/route.ts
+  s_073f4fecb333e8::t_e77231d507483a 14
+  s_073f4fecb333e8::t_db24e77752a96a 1
+  s_073f4fecb333e8::t_2729a1885f6d7e 30
+src/app/api/desk/stream/route.ts
+  s_073f4fecb333e8::t_13f1447c82db4b 8
+  s_073f4fecb333e8::t_3c0c3b8348d894 2
+src/app/api/auth/login/route.ts
+  s_073f4fecb333e8::t_30ec15c618913d 3
+  s_073f4fecb333e8::t_2ea68929fbf4c0 15
+  s_073f4fecb333e8::t_e7001dd37012ee 8
+src/app/api/onboard/schema/route.ts
+  s_073f4fecb333e8::t_7254e2480672ac 1-9,11-12
+  s_073f4fecb333e8::t_13aec918ed5ba2 10
+src/app/api/tenants/route.ts
+  s_073f4fecb333e8::t_e5a899f16d7698 2
+  s_073f4fecb333e8::t_b2e4d4e9ee6d80 7
+src/app/api/sessions/start/route.ts
+  s_073f4fecb333e8::t_5b4f69acada74f 7-8,11-18
+  s_073f4fecb333e8::t_64f045127a46ed 2
+src/app/api/sessions/[id]/language/route.ts
+  s_073f4fecb333e8::t_23713fc1493bde 2
+  s_073f4fecb333e8::t_ca6247f03a6b13 11
+src/app/api/sessions/[id]/say/route.ts
+  s_073f4fecb333e8::t_7ef29e7e6f0680 2
+  s_073f4fecb333e8::t_0c5cdd086be29b 12
+src/app/api/tenants/[slug]/leads/route.ts
+  s_073f4fecb333e8::t_471ed2202c7dfc 1-32
+src/app/api/tenants/[slug]/route.ts
+  s_073f4fecb333e8::t_76784a2ac4f90f 11
+  s_073f4fecb333e8::t_49d706621e4515 2
+  s_073f4fecb333e8::t_abfcaef6a2738c 22
+src/app/api/auth/me/route.ts
+  s_073f4fecb333e8::t_db67d2e74c2000 3
+  s_073f4fecb333e8::t_5c1494c257561f 8
+src/app/api/sessions/route.ts
+  s_073f4fecb333e8::t_fa163399982426 7
+  s_073f4fecb333e8::t_457c0594c08ed2 2
+src/app/api/tenants/[slug]/dial/route.ts
+  s_073f4fecb333e8::t_60715e00e2c811 1-67
+src/app/api/sessions/[id]/route.ts
+  s_073f4fecb333e8::t_fb34d6f950633d 2
+  s_073f4fecb333e8::t_dc412163f586f0 10
+src/app/api/tenants/create/route.ts
+  s_073f4fecb333e8::t_21267dec807831 2
+  s_073f4fecb333e8::t_e412ba4dbaae75 16
+src/app/api/ingest/route.ts
+  s_073f4fecb333e8::t_b0022b407363ef 27-29
+  s_073f4fecb333e8::t_9b0aaf7862b827 2
+  s_073f4fecb333e8::t_8104db8e06c5c2 47
+  s_073f4fecb333e8::t_fd47dc9e0f011d 3
+  s_073f4fecb333e8::t_77387c89888f83 13
+  s_073f4fecb333e8::t_063a626e1ccd8c 66-74
+  s_073f4fecb333e8::t_6320ea3fd3ba8b 75
+src/app/api/auth/signup/route.ts
+  s_073f4fecb333e8::t_b1d67ee9d93470 3
+  s_073f4fecb333e8::t_d67523dbc6a8fc 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "6836d8b6e966a376cb6776f877c98e8fbd7dae70",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
