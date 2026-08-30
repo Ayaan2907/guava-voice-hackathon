@@ -1,0 +1,90 @@
+.env.example
+  s_073f4fecb333e8::t_c173bbd6fba9c6 3
+  s_073f4fecb333e8::t_e33763fa0ba4af 4
+src/app/api/platform/provision/route.ts
+  s_073f4fecb333e8::t_9197f48b9434f1 1-24
+src/components/tenants-board.tsx
+  s_073f4fecb333e8::t_c51c4894dd82ea 91-92,94
+src/lib/types.ts
+  s_073f4fecb333e8::t_d9a23b707b5f68 67
+  s_073f4fecb333e8::t_815121574dd7fe 1-2
+src/lib/templates.ts
+  s_073f4fecb333e8::t_cc66c17a42a860 137
+  s_073f4fecb333e8::t_5314fa7546d386 329
+  s_073f4fecb333e8::t_dfa5c929e1e0ed 678-681,685
+  s_073f4fecb333e8::t_3cb93d47fab1ae 45
+  s_073f4fecb333e8::t_bf1fe151441bb5 1
+  s_073f4fecb333e8::t_ff6068d3c41173 31-44,46-136,142
+  s_073f4fecb333e8::t_5fd6006c5a142a 451,545,623
+src/components/line-client.tsx
+  s_073f4fecb333e8::t_1f39865fb3bc1e 48-50
+  s_073f4fecb333e8::t_60472804c23c7c 53-54
+src/lib/store.ts
+  s_073f4fecb333e8::t_a033ebeca93725 31-36
+  s_073f4fecb333e8::t_b01b19d7cbc31d 5-6
+  s_073f4fecb333e8::t_4b3c8ad4d583b0 40-43,45-49,52,59-60
+  s_073f4fecb333e8::t_c6371127defafd 139-151
+  s_073f4fecb333e8::t_88095895048437 174-181
+src/lib/platform-schema.ts
+  s_073f4fecb333e8::t_f0bd13faf686a4 1-84
+src/app/api/auth/signup/route.ts
+  s_073f4fecb333e8::t_2a7acc75be8052 30
+src/app/api/tenants/create/route.ts
+  s_073f4fecb333e8::t_a56b6ad9e4f4d0 25
+src/app/login/page.tsx
+  s_073f4fecb333e8::t_725e73a98b466d 47,49-50
+src/lib/onboard.ts
+  s_073f4fecb333e8::t_dbad7a2ec49214 8
+README.md
+  s_073f4fecb333e8::t_2549d279b127f7 3,5,7,9,11,13,15,17,19,21-23,25-29,32,34-44,47-98,103-112,123,126,128,130-133,137
+src/lib/platform.ts
+  s_073f4fecb333e8::t_d2b206ab50502b 1-39
+src/app/api/platform/schema/route.ts
+  s_073f4fecb333e8::t_1a5d1948aba1b9 1-11
+src/app/api/ingest/route.ts
+  s_073f4fecb333e8::t_15b50ecdfe78f4 3
+  s_073f4fecb333e8::t_bc9f869e7a2e5a 69,77-85
+  s_073f4fecb333e8::t_07173a96fc31aa 28
+  s_073f4fecb333e8::t_60b52a4a3191c2 86-87
+src/components/site-header.tsx
+  s_073f4fecb333e8::t_c7f14841f5297a 19
+src/app/page.tsx
+  s_073f4fecb333e8::t_2f4620089e8e3d 18-21
+  s_073f4fecb333e8::t_69cd57ebb6fded 28
+src/components/crm-client.tsx
+  s_073f4fecb333e8::t_bc76983074fd92 119-136
+src/app/app/[slug]/page.tsx
+  s_073f4fecb333e8::t_cfdb30078b1508 20
+expert/main.py
+  s_073f4fecb333e8::t_1bd23233dc87e7 481-484
+  s_073f4fecb333e8::t_2867b6e89a3e35 672-676,681
+  s_073f4fecb333e8::t_cd97e28f9a3af1 745-748
+  s_073f4fecb333e8::t_a81bb8e80c28ce 651-658,663
+  s_073f4fecb333e8::t_298d6e23d03d8d 424-457
+  s_073f4fecb333e8::t_9bdc51a288f344 7-10,13-14
+  s_073f4fecb333e8::t_d7dc32f971bcad 280-309
+  s_073f4fecb333e8::t_7bc69fd5025404 838-846
+  s_073f4fecb333e8::t_0553aae5e36550 707-714,719,728-734
+  s_073f4fecb333e8::t_37553f84d78773 42
+src/app/desks/page.tsx
+  s_073f4fecb333e8::t_70a06ffbd961f2 5
+  s_073f4fecb333e8::t_d58a586174f6cb 2,11-12,14,20,22-23,25-30,32
+src/components/platform-hero.tsx
+  s_073f4fecb333e8::t_4788601bc7e8c8 1-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.0",
+  "base_commit_sha": "9c89f1f01f9d1b718267466423aa438e9d2f0e5e",
+  "prompts": {},
+  "sessions": {
+    "s_073f4fecb333e8": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "a1990b3a-bdcf-4fd5-a563-767785620014",
+        "model": "grok-4.6"
+      },
+      "human_author": "Ayaan Kaifullah <ayaanansari7921@outlook.com>"
+    }
+  }
+}
