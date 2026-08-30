@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import path from "path";
 import { publish } from "./bus";
 import { seedTenants } from "./templates";
-import type { Session, StoreShape, Tenant, TranscriptLine } from "./types";
+import type { PactUser, Session, StoreShape, Tenant, TranscriptLine } from "./types";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const STORE_PATH = path.join(DATA_DIR, "runtime.json");
@@ -10,6 +10,7 @@ const STORE_PATH = path.join(DATA_DIR, "runtime.json");
 type Memory = {
   tenants: Tenant[];
   sessions: Session[];
+  users: PactUser[];
 };
 
 const g = globalThis as unknown as { __pactMem?: Memory };
@@ -21,22 +22,52 @@ function mem(): Memory {
   return g.__pactMem;
 }
 
+function seedUsers(): PactUser[] {
+  return [
+    {
+      id: "user_northstar",
+      email: "northstar@pact.local",
+      password: "demo",
+      orgSlug: "northstar",
+    },
+    {
+      id: "user_harbor",
+      email: "harbor@pact.local",
+      password: "demo",
+      orgSlug: "harbor-lane",
+    },
+  ];
+}
+
+function ensureTenantFlags(t: Tenant): Tenant {
+  return {
+    ...t,
+    inboundEnabled: t.inboundEnabled ?? true,
+    outboundEnabled: t.outboundEnabled ?? true,
+    onboardComplete: t.onboardComplete ?? true,
+  };
+}
+
 function load(): Memory {
   try {
     const raw = readFileSync(STORE_PATH, "utf8");
     const parsed = JSON.parse(raw) as StoreShape;
     if (Array.isArray(parsed.tenants) && parsed.tenants.length > 0) {
-      return { tenants: parsed.tenants, sessions: [] };
+      return {
+        tenants: parsed.tenants.map(ensureTenantFlags),
+        sessions: [],
+        users: Array.isArray(parsed.users) && parsed.users.length > 0 ? parsed.users : seedUsers(),
+      };
     }
   } catch {
     // first boot
   }
-  return { tenants: seedTenants(), sessions: [] };
+  return { tenants: seedTenants(), sessions: [], users: seedUsers() };
 }
 
 function persist() {
   mkdirSync(DATA_DIR, { recursive: true });
-  const payload: StoreShape = { tenants: mem().tenants };
+  const payload: StoreShape = { tenants: mem().tenants, users: mem().users };
   writeFileSync(STORE_PATH, JSON.stringify(payload, null, 2));
 }
 
@@ -50,22 +81,48 @@ export function getTenant(slug: string) {
 
 export function upsertTenant(tenant: Tenant) {
   const m = mem();
-  const idx = m.tenants.findIndex((t) => t.slug === tenant.slug);
-  if (idx >= 0) m.tenants[idx] = tenant;
-  else m.tenants.push(tenant);
+  const next = ensureTenantFlags(tenant);
+  const idx = m.tenants.findIndex((t) => t.slug === next.slug);
+  if (idx >= 0) m.tenants[idx] = next;
+  else m.tenants.push(next);
   persist();
   publish({
     type: "tenant.updated",
-    tenantSlug: tenant.slug,
+    tenantSlug: next.slug,
     at: new Date().toISOString(),
   });
-  return tenant;
+  return next;
+}
+
+export function getUserByEmail(email: string) {
+  return mem().users.find((u) => u.email.toLowerCase() === email.toLowerCase()) ?? null;
+}
+
+export function getUserBySlug(orgSlug: string) {
+  return mem().users.find((u) => u.orgSlug === orgSlug) ?? null;
+}
+
+export function upsertUser(user: PactUser) {
+  const m = mem();
+  const idx = m.users.findIndex((u) => u.id === user.id || u.email.toLowerCase() === user.email.toLowerCase());
+  if (idx >= 0) m.users[idx] = user;
+  else m.users.push(user);
+  persist();
+  return user;
 }
 
 export function listSessions(tenantSlug?: string) {
   const sessions = mem().sessions;
   if (!tenantSlug) return sessions;
   return sessions.filter((s) => s.tenantSlug === tenantSlug);
+}
+
+export function findLiveInbound(tenantSlug: string) {
+  return (
+    mem().sessions.find(
+      (s) => s.tenantSlug === tenantSlug && s.direction === "inbound" && s.status !== "ended",
+    ) ?? null
+  );
 }
 
 export function getSession(id: string) {

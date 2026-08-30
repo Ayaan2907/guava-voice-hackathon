@@ -21,11 +21,26 @@ export type PlaybookField = {
   choices?: string[];
 };
 
+export type ActionKey =
+  | "collect"
+  | "answer"
+  | "negotiate"
+  | "book"
+  | "human_please";
+
 export type Intent = {
   id: string;
   label: string;
   description: string;
-  action: "collect" | "answer" | "negotiate" | "book" | "escalate";
+  when?: string;
+  action: ActionKey;
+};
+
+export type PactUser = {
+  id: string;
+  email: string;
+  password: string;
+  orgSlug: string;
 };
 
 export type KnowledgeDoc = {
@@ -72,6 +87,9 @@ export type Tenant = {
   knowledge: KnowledgeDoc[];
   negotiationMoves: string[];
   leads: Lead[];
+  inboundEnabled: boolean;
+  outboundEnabled: boolean;
+  onboardComplete: boolean;
   createdAt: string;
 };
 
@@ -117,4 +135,5 @@ export type PactEvent = {
 
 export type StoreShape = {
   tenants: Tenant[];
+  users: PactUser[];
 };

@@ -20,11 +20,18 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import threading
 import urllib.error
 import urllib.request
+from datetime import timedelta
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from envutil import load_repo_env
+
+load_repo_env()
 
 PACT_URL = os.environ.get("PACT_URL", "http://127.0.0.1:43147")
 INGEST_SECRET = os.environ.get("PACT_INGEST_SECRET", "dev-secret")
@@ -38,6 +45,26 @@ CALL_TO_SESSION: dict[int, str] = {}
 def pact_get(path: str) -> Any:
     with urllib.request.urlopen(f"{PACT_URL}{path}", timeout=5) as res:
         return json.loads(res.read().decode())
+
+
+def pact_patch_tenant(slug: str, payload: dict[str, Any]) -> None:
+    req = urllib.request.Request(
+        f"{PACT_URL}/api/tenants/{slug}",
+        data=json.dumps(payload).encode(),
+        headers={"Content-Type": "application/json"},
+        method="PATCH",
+    )
+    try:
+        urllib.request.urlopen(req, timeout=5).read()
+    except urllib.error.URLError as exc:
+        print(f"[pact] tenant patch failed: {exc}")
+
+
+def mint_webrtc_code() -> str:
+    from guava import Client
+
+    client = Client()
+    return str(client.create_webrtc_agent(ttl=timedelta(hours=12)))
 
 
 def pact_ingest(payload: dict[str, Any]) -> None:
@@ -98,6 +125,18 @@ class WhisperHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             self.wfile.write(b'{"ok":true}')
+            return
+        if self.path == "/mint":
+            try:
+                code = mint_webrtc_code()
+                payload = json.dumps({"code": code}).encode()
+                self.send_response(200)
+            except Exception as exc:
+                payload = json.dumps({"error": str(exc)}).encode()
+                self.send_response(500)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(payload)
             return
         self.send_response(404)
         self.end_headers()
@@ -284,7 +323,7 @@ def main() -> None:
     api_key = os.environ.get("GUAVA_API_KEY")
     if not api_key:
         print("[pact] GUAVA_API_KEY not set. Desk simulation still works in the Next app.")
-        print("[pact] At the venue: export the key, paste grtc- codes, rerun this file.")
+        print("[pact] Put the key in .env and rerun this file for live WebRTC.")
         threading.Event().wait()
         return
 
@@ -293,6 +332,15 @@ def main() -> None:
 
     runner = Runner()
     for tenant in tenants:
+        code = tenant.get("webrtcCode") or ""
+        if not str(code).startswith("grtc-"):
+            try:
+                minted = mint_webrtc_code()
+                tenant["webrtcCode"] = minted
+                pact_patch_tenant(tenant["slug"], {"webrtcCode": minted})
+                print(f"[pact] minted WebRTC for {tenant['slug']}")
+            except Exception as exc:
+                print(f"[pact] mint failed for {tenant['slug']}: {exc}")
         attach_tenant(guava, runner, tenant)
     print("[pact] Runner starting. Ctrl-C to stop.")
     runner.run()

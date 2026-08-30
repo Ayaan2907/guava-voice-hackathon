@@ -22,24 +22,23 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                href="/desk/northstar"
+                href="/login"
                 className="rounded-md bg-primary px-4 py-2.5 text-sm text-primary-foreground no-underline"
               >
-                Demo: Northstar Mutual
+                Sign in to your desk
               </Link>
               <Link
-                href="/line/northstar"
+                href="/signup"
                 className="rounded-md border border-border bg-card px-4 py-2.5 text-sm no-underline"
               >
-                Be the inbound caller
-              </Link>
-              <Link
-                href="/onboard"
-                className="rounded-md px-4 py-2.5 text-sm text-muted-foreground no-underline"
-              >
-                Sign up another business
+                Sign up a business
               </Link>
             </div>
+            <p className="mt-4 max-w-2xl text-xs text-muted-foreground">
+              Guava Build Night SF · table demo is 2 minutes. Two windows, one call: hail claim →
+              “I want a manager” → whisper $150, do not waive → then Priya (Spanish gloss) or Harbor
+              Lane. No transfer.
+            </p>
           </div>
         </section>
 

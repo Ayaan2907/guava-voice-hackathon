@@ -1,103 +1,108 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { VERTICAL_BLURBS, VERTICAL_LABELS } from "@/lib/templates";
-import type { Vertical } from "@/lib/types";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import type { Session, Tenant } from "@/lib/types";
 
-const CHOICES: Vertical[] = ["insurance", "logistics", "healthcare", "ecommerce", "custom"];
-
-export default function OnboardPage() {
+export default function OnboardInterviewPage() {
   const router = useRouter();
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [vertical, setVertical] = useState<Vertical>("insurance");
+  const [tenant, setTenant] = useState<Tenant | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  useEffect(() => {
+    void fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.user) {
+          router.push("/login?next=/onboard");
+          return;
+        }
+        setTenant(data.tenant);
+        if (data.tenant?.onboardComplete) router.push(`/app/${data.user.orgSlug}`);
+      });
+  }, [router]);
+
+  useEffect(() => {
+    if (!tenant) return;
+    const es = new EventSource(`/api/desk/stream?tenant=${tenant.slug}`);
+    es.onmessage = (msg) => {
+      const data = JSON.parse(msg.data) as { sessions?: Session[] };
+      if (!data.sessions) return;
+      const live =
+        data.sessions.find((s) => s.subject === "Onboarding intake") ??
+        data.sessions.find((s) => s.status !== "ended") ??
+        data.sessions[0] ??
+        null;
+      setSession(live);
+    };
+    return () => es.close();
+  }, [tenant]);
+
+  async function start() {
+    if (!tenant) return;
     setPending(true);
     setError(null);
-    const res = await fetch("/api/tenants/create", {
+    const res = await fetch("/api/sessions/start", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, city, vertical }),
+      body: JSON.stringify({ tenantSlug: tenant.slug, kind: "onboard", force: true }),
     });
     const data = await res.json();
     setPending(false);
     if (!res.ok) {
-      setError(data.error ?? "Could not create the desk.");
+      setError(data.error ?? "Could not start intake.");
       return;
     }
-    router.push(`/desk/${data.tenant.slug}`);
+    setSession(data.session);
   }
+
+  async function finish() {
+    const res = await fetch("/api/onboard/complete", { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error ?? "Could not save playbook.");
+      return;
+    }
+    router.push(`/app/${data.tenant.slug}`);
+  }
+
+  const done = Boolean(tenant?.onboardComplete || session?.status === "ended");
 
   return (
     <div className="min-h-screen">
       <SiteHeader />
-      <main className="mx-auto max-w-xl px-4 py-12">
-        <p className="text-xs tracking-[0.16em] text-brass uppercase">New tenant</p>
-        <h1 className="font-serif mt-2 text-4xl">Stand up a desk</h1>
+      <main className="mx-auto max-w-2xl px-4 py-12">
+        <p className="text-xs tracking-[0.16em] text-brass uppercase">One Guava call</p>
+        <h1 className="font-serif mt-2 text-4xl">Teach Pact your desk</h1>
         <p className="mt-3 text-muted-foreground">
-          This is the product: a business name and a vertical. We copy a playbook,
-          assign an inbound web line, and give you the same operator console Northstar
-          uses. No new repo. No new Expert process per customer — one Runner, many
-          agents.
+          {tenant ? `${tenant.name} — ` : ""}this interview writes purpose, greeting, and authority. Simulator
+          tonight if live audio is still attaching. After it ends, you get the CRM.
         </p>
-
-        <form onSubmit={submit} className="mt-8 space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name">Business name</Label>
-            <Input
-              id="name"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Redwood Health Group"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="city">City (optional)</Label>
-            <Input
-              id="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              placeholder="e.g. Sacramento, CA"
-            />
-          </div>
-          <fieldset className="space-y-3">
-            <legend className="text-sm font-medium">Vertical template</legend>
-            <div className="grid gap-2">
-              {CHOICES.map((v) => (
-                <label
-                  key={v}
-                  className={`cursor-pointer rounded-lg border p-3 text-sm ${
-                    vertical === v ? "border-foreground bg-card" : "border-border"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    className="sr-only"
-                    name="vertical"
-                    checked={vertical === v}
-                    onChange={() => setVertical(v)}
-                  />
-                  <span className="font-medium">{VERTICAL_LABELS[v]}</span>
-                  <span className="mt-1 block text-muted-foreground">{VERTICAL_BLURBS[v]}</span>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-          {error ? <p className="text-sm text-destructive">{error}</p> : null}
-          <Button type="submit" disabled={pending} className="w-full">
-            {pending ? "Spinning up…" : "Create desk and open console"}
+        <div className="mt-6 flex flex-wrap gap-2">
+          <Button type="button" onClick={() => void start()} disabled={pending || !tenant}>
+            {pending ? "Starting…" : "Start intake"}
           </Button>
-        </form>
+          <Button type="button" variant="outline" onClick={() => void finish()} disabled={!tenant}>
+            {done ? "Open CRM" : "Skip and use defaults"}
+          </Button>
+        </div>
+        {error ? <p className="mt-3 text-sm text-destructive">{error}</p> : null}
+        <ScrollArea className="mt-8 h-[420px] rounded-xl border bg-card p-4">
+          <ul className="space-y-3 text-sm">
+            {(session?.transcript ?? []).map((line) => (
+              <li key={line.id}>
+                <span className="text-xs tracking-wide text-brass uppercase">{line.role}</span>
+                <p className="mt-0.5">{line.text}</p>
+              </li>
+            ))}
+            {!session ? <li className="text-muted-foreground">Press start. The agent will interview you.</li> : null}
+          </ul>
+        </ScrollArea>
       </main>
     </div>
   );
